@@ -22,6 +22,7 @@ package org.omnifaces.utils.function;
  *     </code>
  * </p>
  */
+@FunctionalInterface
 public interface ThrowingAutoCloseable<E extends Exception> extends AutoCloseable {
 
 	@Override
