@@ -9,7 +9,7 @@
 
     <groupId>org.omnifaces</groupId>
     <artifactId>omniutils</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.1-SNAPSHOT</version>
 
     <name>OmniUtils</name>
     <description>Java utility library</description>
