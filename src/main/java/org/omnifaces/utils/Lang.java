@@ -3,6 +3,7 @@ package org.omnifaces.utils;
 import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public final class Lang {
 
@@ -75,6 +76,15 @@ public final class Lang {
 			return value.toString() == null || value.toString().isEmpty();
 		}
 	}
+
+	public static <T, E extends Exception> T requireNotEmpty(T value, Supplier<E> exceptionSupplier) throws E {
+		if (isEmpty(value)) {
+			throw exceptionSupplier.get();
+		}
+
+		return value;
+	}
+
 	/**
 	 * Returns the first non-<code>null</code> object of the argument list, or <code>null</code> if there is no such element.
 	 *
