@@ -6,22 +6,21 @@ import static java.util.stream.Collectors.joining;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public final class Exceptions {
 
-	private static final List<String> JDK_STACKTRACE_EXCLUSIONS = unmodifiableList(asList(
+	private static final List<String> JAVA_SE_STACK_TRACE_EXCLUSIONS = unmodifiableList(asList(
 			"java.lang.reflect",
 			"java.lang.Thread.run",
 			"sun.reflect"
 	));
 
-	// TODO figure out which other OmniFaces classes/packages to exclude
-	private static final List<String> OMNIFACES_STACKTRACE_EXCLUSIONS = unmodifiableList((asList("org.omnifaces.filter.HttpFilter")));
-
 	// TODO Give clearer name and expand with packages from other containers
-	private static final List<String> OTHER_STACKTRACE_EXCLUSIONS = unmodifiableList(asList(
+	private static final List<String> JAVA_EE_STACK_TRACE_EXCLUSIONS = unmodifiableList(asList(
+			"org.omnifaces.filter.HttpFilter",
 			"com.sun.faces.el.DemuxCompositeELResolver._getValue",
 			"com.sun.faces.lifecycle.Phase.doPhase",
 			"javax.faces.component.UIComponentBase.processValidators",
@@ -29,6 +28,7 @@ public final class Exceptions {
 			"org.apache.catalina.valves.ErrorReportValve",
 			"org.apache.coyote.http11.Http11Protocol",
 			"org.apache.el.parser.AstValue",
+			// JBoss/WildFly specific exclusions
 			"org.jboss.aop",
 			"org.jboss.aspects",
 			"org.jboss.as.ee.component",
@@ -137,8 +137,7 @@ public final class Exceptions {
 
 		if (message == null) {
 			return throwable.getClass().getName();
-		}
-		else if (message.contains(":")) {
+		} else if (message.contains(":")) {
 			String[] messageParts = message.split(":");
 			StringBuilder messageBuilder = new StringBuilder();
 			int count = 0;
@@ -165,16 +164,25 @@ public final class Exceptions {
 		             .collect(joining());
 	}
 
-	public static Predicate<StackTraceElement> filterJDK() {
+	public static Predicate<StackTraceElement> excludeJavaSE() {
 		// TODO better name for this
-		return stackTraceElement -> JDK_STACKTRACE_EXCLUSIONS.stream()
-		                                                     .noneMatch(exclusion -> stackTraceElement.toString().startsWith(exclusion) ||
-				                                                     stackTraceElement.getClassName().startsWith(exclusion));
+		return excludeFromStackTrace(JAVA_SE_STACK_TRACE_EXCLUSIONS);
 	}
 
-	public static Predicate<StackTraceElement> filterAll() {
+	public static Predicate<StackTraceElement> excludeJavaEE() {
+		return excludeFromStackTrace(JAVA_EE_STACK_TRACE_EXCLUSIONS);
+	}
+
+	public static Predicate<StackTraceElement> excludeAll() {
 		// TODO better name for method and include the other exclusions as well
-		return filterJDK();
+		return excludeJavaSE().and(excludeJavaEE());
+	}
+
+	public static Predicate<StackTraceElement> excludeFromStackTrace(List<String> packageOrClassNames) {
+		Objects.requireNonNull(packageOrClassNames);
+		return stackTraceElement -> packageOrClassNames.stream()
+		                                               .noneMatch(exclusion -> stackTraceElement.toString().startsWith(exclusion) ||
+				                                               stackTraceElement.getClassName().startsWith(exclusion));
 	}
 
 }

@@ -20,8 +20,8 @@ public final class PropertiesUtils {
 
 	private static final Logger logger = Logger.getLogger(PropertiesUtils.class.getName());
 	private static final String CONFIGURATION_BASE_DIR = "/conf/";
-	
-	public static enum PropertiesFormat {XML, LIST} 
+
+	public static enum PropertiesFormat {XML, LIST}
 
 	private PropertiesUtils() {
 	}
@@ -56,9 +56,9 @@ public final class PropertiesUtils {
 	public static Map<String, String> loadXMLPropertiesStagedFromEar(String fileName, String stageSystemPropertyName) {
 		return loadStagedFromEar(PropertiesUtils::loadXMLFromUrl, fileName, stageSystemPropertyName);
 	}
-	
+
 	public static Map<String, String> loadStagedFromEar(BiConsumer<String, Map<? super String, ? super String>> loadMethod, String fileName, String stageSystemPropertyName) {
-		
+
 		String earBaseUrl = getEarBaseUrl();
 		String stage = getProperty(stageSystemPropertyName);
 		if (stage == null) {
@@ -69,7 +69,7 @@ public final class PropertiesUtils {
 
 		loadMethod.accept(earBaseUrl + CONFIGURATION_BASE_DIR + fileName, settings);
 		loadMethod.accept(earBaseUrl + CONFIGURATION_BASE_DIR + stage + "/" + fileName, settings);
-		
+
 		return unmodifiableMap(settings);
 	}
 
@@ -109,7 +109,7 @@ public final class PropertiesUtils {
 	public static void loadListFromUrl(String url, Map<? super String, ? super String> settings) {
 		loadPropertiesFromUrl(url, settings, LIST);
 	}
-	
+
 	public static void loadXMLFromUrl(String url, Map<? super String, ? super String> settings) {
 		loadPropertiesFromUrl(url, settings, XML);
 	}
@@ -117,7 +117,7 @@ public final class PropertiesUtils {
 	public static void loadPropertiesFromUrl(String url, Map<? super String, ? super String> settings, PropertiesFormat propertiesFormat) {
 		Properties properties = new Properties();
 		try (InputStream in = new URL(url).openStream()) {
-			
+
 			if (propertiesFormat == XML) {
 				properties.loadFromXML(in);
 			} else {
@@ -131,7 +131,7 @@ public final class PropertiesUtils {
 			}
 
 		} catch (IOException e) {
-			logger.log(SEVERE, "Eror while loading settings.", e);
+			logger.log(SEVERE, "Error while loading settings.", e);
 		}
 	}
 
