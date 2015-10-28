@@ -12,6 +12,29 @@ public final class MessageDigests {
 	}
 
 	/**
+	 * Returns a {@link MessageDigest} instance that implements the specified digest algorithm.
+	 *
+	 * <p>
+	 * This method calls {@link MessageDigest#getInstance(String)}, but wraps any potential {@link NoSuchAlgorithmException}s in a
+	 * {@link UncheckedNoSuchAlgorithmException} as this is an unrecoverable problem in most cases.
+	 * </p>
+	 *
+	 * @param algorithm
+	 *            the name of the algorithm to use
+	 * @return a {@link MessageDigest} instance that implements the specified algorithm
+	 * @throws UncheckedNoSuchAlgorithmException
+	 *             if no implementation of the given algorithm is found
+	 */
+	public static MessageDigest getMessageDigestInstance(String algorithm) throws UncheckedNoSuchAlgorithmException {
+		try {
+			return MessageDigest.getInstance(algorithm);
+		}
+		catch (NoSuchAlgorithmException e) {
+			throw new UncheckedNoSuchAlgorithmException(e);
+		}
+	}
+
+	/**
 	 * Calculate a message digest over a given string using the specified algorithm.
 	 *
 	 * This method will use {@link java.nio.charset.StandardCharsets#UTF_8 UTF_8} encoding.
@@ -41,24 +64,14 @@ public final class MessageDigests {
 	}
 
 	public static byte[] digest(byte[] message, String algorithm) throws UncheckedNoSuchAlgorithmException {
-		try {
-			return MessageDigest.getInstance(algorithm).digest(message);
-		}
-		catch (NoSuchAlgorithmException e) {
-			throw new UncheckedNoSuchAlgorithmException(e);
-		}
+		return getMessageDigestInstance(algorithm).digest(message);
 	}
 
-	public static byte[] digest(byte[] message, byte[] salt, String algorithm) {
-		try {
-			MessageDigest messageDigest = MessageDigest.getInstance(algorithm);
+	public static byte[] digest(byte[] message, byte[] salt, String algorithm) throws UncheckedNoSuchAlgorithmException {
+		MessageDigest messageDigest = getMessageDigestInstance(algorithm);
 
-			messageDigest.update(salt);
+		messageDigest.update(salt);
 
-			return messageDigest.digest(message);
-		}
-		catch (NoSuchAlgorithmException e) {
-			throw new UncheckedNoSuchAlgorithmException(e);
-		}
+		return messageDigest.digest(message);
 	}
 }
