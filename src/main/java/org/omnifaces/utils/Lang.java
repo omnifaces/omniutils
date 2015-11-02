@@ -121,4 +121,14 @@ public final class Lang {
 
 		return false;
 	}
+
+	/**
+	 * Returns <code>true</code> if the given string contains any ISO control characters.
+	 *
+	 * @param string the string to check for control characters
+	 * @return <code>true</code> if the string contains any ISO control characters and <code>false</code> otherwise
+	 */
+	public static boolean containsIsoControlCharacters(String string) {
+		return string.codePoints().anyMatch(Character::isISOControl);
+	}
 }
