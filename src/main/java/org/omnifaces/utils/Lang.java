@@ -84,6 +84,14 @@ public final class Lang {
 
 		return value;
 	}
+	
+	public static <T> T ifEmptyGet(T value, Supplier<T> defaultSupplier) {
+		if (isEmpty(value)) {
+			return defaultSupplier.get();
+		}
+
+		return value;
+	}
 
 	/**
 	 * Returns the first non-<code>null</code> object of the argument list, or <code>null</code> if there is no such element.
