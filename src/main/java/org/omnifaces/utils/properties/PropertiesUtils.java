@@ -3,8 +3,8 @@ package org.omnifaces.utils.properties;
 import static java.lang.System.getProperty;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.logging.Level.SEVERE;
-import static org.omnifaces.utils.properties.PropertiesUtils.PropertiesFormat.XML;
 import static org.omnifaces.utils.properties.PropertiesUtils.PropertiesFormat.LIST;
+import static org.omnifaces.utils.properties.PropertiesUtils.PropertiesFormat.XML;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -96,6 +96,10 @@ public final class PropertiesUtils {
 
 			if (withoutJar.endsWith("/lib")) {
 				withoutJar = withoutJar.substring(0, withoutJar.length() - 4);
+			}
+
+			if (withoutJar.endsWith("/WEB-INF")) {
+				withoutJar += "/classes";
 			}
 
 			return withoutJar;
