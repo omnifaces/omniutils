@@ -19,6 +19,13 @@
     </organization>
     <inceptionYear>2015</inceptionYear>
 
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
