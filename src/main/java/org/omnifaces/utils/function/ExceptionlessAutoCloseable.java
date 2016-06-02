@@ -9,15 +9,15 @@ package org.omnifaces.utils.function;
  * throw a more specific exception than Exception, please see @link{ThrowingAutoCloseable}.
  * </p>
  *
- * <p>
- *     <h4>Example:</h4>
- *     <code>
- *         CloseableResource resource = ...
- *         try (ExceptionlessAutoCloseable eac = resource::close) {
- *             // Use resource
- *         }
- *     </code>
- * </p>
+ *
+ * <h3>Example:</h3>
+ * <code>
+ *     CloseableResource resource = ...
+ *     try (ExceptionlessAutoCloseable eac = resource::close) {
+ *         // Use resource
+ *     }
+ * </code>
+ *
  */
 @FunctionalInterface
 public interface ExceptionlessAutoCloseable extends AutoCloseable {

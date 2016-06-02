@@ -9,18 +9,18 @@ package org.omnifaces.utils.function;
  * defines. For methods that don't throw any exceptions, see @link{ExceptionLessAutoCloseable}.
  * </p>
  *
- * <p>
- *     <h4>Example:</h4>
- *     <code>
- *         CloseableResource resource = ...
- *         try (ThrowingAutoCloseable&lt;IOException&gt; eac = resource::close) {
- *             // Use resource
- *         }
- *         catch(IOException e) {
- *             // Handle exception
- *         }
- *     </code>
- * </p>
+ *
+ * <h3>Example:</h3>
+ * <code>
+ *     CloseableResource resource = ...
+ *     try (ThrowingAutoCloseable&lt;IOException&gt; eac = resource::close) {
+ *         // Use resource
+ *     }
+ *     catch(IOException e) {
+ *         // Handle exception
+ *     }
+ * </code>
+ *
  */
 @FunctionalInterface
 public interface ThrowingAutoCloseable<E extends Exception> extends AutoCloseable {

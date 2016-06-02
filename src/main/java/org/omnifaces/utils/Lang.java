@@ -3,6 +3,7 @@ package org.omnifaces.utils;
 import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public final class Lang {
 
@@ -52,6 +53,7 @@ public final class Lang {
 	/**
 	 * Returns <code>true</code> if the given value is null or is empty. Types of String, Collection, Map and Array are
 	 * recognized. If none is recognized, then examine the emptiness of the toString() representation instead.
+	 * 
 	 * @param value The value to be checked on emptiness.
 	 * @return <code>true</code> if the given value is null or is empty.
 	 */
@@ -75,6 +77,54 @@ public final class Lang {
 			return value.toString() == null || value.toString().isEmpty();
 		}
 	}
+	
+	/**
+	 * Returns true if all values are empty, false if at least one value is not empty.
+	 * @param values the values to be checked on emptiness
+	 * @return True if all values are empty, false otherwise
+	 */
+	public static boolean isAllEmpty(Object... values) {
+		for (Object value : values) {
+			if (!isEmpty(value)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Returns <code>true</code> if at least one value is empty.
+	 *
+	 * @param values the values to be checked on emptiness
+	 * @return <code>true</code> if any value is empty and <code>false</code> if no values are empty
+	 */
+	public static boolean isAnyEmpty(Object... values) {
+		for (Object value : values) {
+			if (isEmpty(value)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public static <T, E extends Exception> T requireNotEmpty(T value, Supplier<E> exceptionSupplier) throws E {
+		if (isEmpty(value)) {
+			throw exceptionSupplier.get();
+		}
+
+		return value;
+	}
+	
+	public static <T> T ifEmptyGet(T value, Supplier<T> defaultSupplier) {
+		if (isEmpty(value)) {
+			return defaultSupplier.get();
+		}
+
+		return value;
+	}
+
 	/**
 	 * Returns the first non-<code>null</code> object of the argument list, or <code>null</code> if there is no such element.
 	 *
@@ -110,5 +160,15 @@ public final class Lang {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Returns <code>true</code> if the given string contains any ISO control characters.
+	 *
+	 * @param string the string to check for control characters
+	 * @return <code>true</code> if the string contains any ISO control characters and <code>false</code> otherwise
+	 */
+	public static boolean containsIsoControlCharacters(String string) {
+		return string.codePoints().anyMatch(Character::isISOControl);
 	}
 }

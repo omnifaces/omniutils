@@ -23,7 +23,6 @@ public final class Collections {
 	 * @param values The values to create an unmodifiable set for.
 	 * @return An unmodifiable set based on the given values.
 	 * @throws ClassCastException When one of the values or one of the arrays or collections is of wrong type.
-	 * @since 1.1
 	 */
 	@SuppressWarnings("unchecked")
 	public static <E> Set<E> unmodifiableSet(Object... values) {
@@ -58,7 +57,6 @@ public final class Collections {
 	 * @param <E> The generic iterable element type.
 	 * @param iterable The iterable to be converted.
 	 * @return The list representation of the given iterable, possibly the same instance as that iterable.
-	 * @since 1.5
 	 */
 	public static <E> List<E> iterableToList(Iterable<E> iterable) {
 
@@ -96,5 +94,16 @@ public final class Collections {
 		}
 
 		return target;
+	}
+	
+	/**
+	 * Returns <tt>true</tt> if the collection is not null and contains the specified element.
+	 * 
+	 * @param collection the collection to test for the specified element
+	 * @param object element to test for in the specified collection
+	 * @return <tt>true</tt> if the collection is not null and contains the specified element
+	 */
+	public static boolean contains(Collection<?> collection, Object object) {
+		return collection != null && collection.contains(object);
 	}
 }
