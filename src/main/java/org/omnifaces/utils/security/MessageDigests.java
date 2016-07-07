@@ -52,7 +52,7 @@ public final class MessageDigests {
 	}
 
 	public static byte[] digest(String message, Charset charset, String algorithm) throws UncheckedNoSuchAlgorithmException {
-		return digest(message.getBytes(UTF_8), algorithm);
+		return digest(message.getBytes(charset), algorithm);
 	}
 
 	public static byte[] digest(String message, byte[] salt, String algorithm) throws UncheckedNoSuchAlgorithmException {
