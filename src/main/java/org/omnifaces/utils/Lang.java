@@ -3,6 +3,7 @@ package org.omnifaces.utils;
 import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -52,7 +53,7 @@ public final class Lang {
 	}
 
 	/**
-	 * Returns <code>true</code> if the given value is null or is empty. Types of String, Collection, Map and Array are
+	 * Returns <code>true</code> if the given value is null or is empty. Types of String, Collection, Map, Optional and Array are
 	 * recognized. If none is recognized, then examine the emptiness of the toString() representation instead.
 	 *
 	 * @param value The value to be checked on emptiness.
@@ -70,6 +71,9 @@ public final class Lang {
 		}
 		else if (value instanceof Map<?, ?>) {
 			return ((Map<?, ?>) value).isEmpty();
+		}
+		else if (value instanceof Optional<?>) {
+			return !((Optional<?>)value).isPresent();
 		}
 		else if (value.getClass().isArray()) {
 			return Array.getLength(value) == 0;
