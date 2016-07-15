@@ -134,10 +134,10 @@ public final class Lang {
 	 * Call the given setter with the given value if {@link #isEmpty(Object)} returns <code>false</code> for the given value.
 	 *
 	 * @param value the value to set
-	 * @param setter the setter to use
+	 * @param setter a consumer that calls the setter with the value
 	 * @param <T> the generic type of the value
 	 */
-	public static <T> void ifNotEmptySet(T value, Consumer<? super T> setter) {
+	public static <T> void setIfNotEmpty(T value, Consumer<? super T> setter) {
 		if (!isEmpty(value)) {
 			setter.accept(value);
 		}
