@@ -30,6 +30,16 @@ public final class PropertiesUtils {
 	private PropertiesUtils() {
 	}
 	
+	public static Map<String, String> loadPropertiesFromClasspath(String baseName) {
+	
+		Map<String, String> properties = new HashMap<>();
+	
+		getResource(baseName + ".xml").ifPresent(url -> loadPropertiesFromUrl(url, properties, XML));
+		getResource(baseName + ".properties").ifPresent(url -> loadPropertiesFromUrl(url, properties, LIST));
+		
+		return unmodifiableMap(properties);
+	}
+	
 	/**
 	 * Loads the properties file in properties list format with the given name from the configuration directory of META-INF with support for staging.
 	 *
@@ -40,8 +50,8 @@ public final class PropertiesUtils {
 	 *            the file name of the properties file
 	 * @return an immutable map instance containing the key/value pairs from the given file
 	 */
-	public static Map<String, String> loadPropertiesListStagedFromClassPath(String fileName, String stageSystemPropertyName) {
-		return loadStagedFromClassPath(PropertiesUtils::loadListFromURL, fileName, stageSystemPropertyName);
+	public static Map<String, String> loadPropertiesListStagedFromClassPath(String fileName, String stageSystemPropertyName, String defaultStage) {
+		return loadStagedFromClassPath(PropertiesUtils::loadListFromURL, fileName, stageSystemPropertyName, defaultStage);
 	}
 	
 	/**
@@ -57,13 +67,13 @@ public final class PropertiesUtils {
 	 * @return an immutable map instance containing the key/value pairs from the
 	 *         given file
 	 */
-	public static Map<String, String> loadXMLPropertiesStagedFromClassPath(String fileName, String stageSystemPropertyName) {
-		return loadStagedFromClassPath(PropertiesUtils::loadXMLFromURL, fileName, stageSystemPropertyName);
+	public static Map<String, String> loadXMLPropertiesStagedFromClassPath(String fileName, String stageSystemPropertyName, String defaultStage) {
+		return loadStagedFromClassPath(PropertiesUtils::loadXMLFromURL, fileName, stageSystemPropertyName, defaultStage);
 	}
 	
-	public static Map<String, String> loadStagedFromClassPath(BiConsumer<URL, Map<? super String, ? super String>> loadMethod, String fileName, String stageSystemPropertyName) {
+	public static Map<String, String> loadStagedFromClassPath(BiConsumer<URL, Map<? super String, ? super String>> loadMethod, String fileName, String stageSystemPropertyName, String defaultStage) {
 
-		String stage = getStage(stageSystemPropertyName);
+		String stage = getStage(stageSystemPropertyName, defaultStage);
 
 		Map<String, String> settings = new HashMap<>();
 		
@@ -216,10 +226,14 @@ public final class PropertiesUtils {
 		return Optional.ofNullable(url);
 	}
 	
-	private static String getStage(String stageSystemPropertyName) {
+	private static String getStage(String stageSystemPropertyName, String defaultStage) {
 		String stage = getProperty(stageSystemPropertyName);
 		if (stage == null) {
-			throw new IllegalStateException(stageSystemPropertyName + " property not found. Please add it to VM arguments, e.g. -D" + stageSystemPropertyName + "=some_stage");
+			if (defaultStage == null) {
+				throw new IllegalStateException(stageSystemPropertyName + " property not found. Please add it to VM arguments, e.g. -D" + stageSystemPropertyName + "=some_stage");
+			}
+			
+			stage = defaultStage;
 		}
 		
 		return stage;
