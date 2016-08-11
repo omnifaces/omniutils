@@ -6,6 +6,4 @@ deploy:
    provider: script
    script: deploy.sh
    on:
-      branches:
-         except:
-            - master
+      branch: develop
