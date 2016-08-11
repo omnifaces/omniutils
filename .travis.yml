@@ -4,6 +4,6 @@ jdk:
 
 deploy:
    provider: script
-   script: deploy.sh
+   script: mvn deploy -Dmaven.test.skip -s settings.xml
    on:
       branch: develop
