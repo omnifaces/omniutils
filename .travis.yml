@@ -6,4 +6,6 @@ deploy:
    provider: script
    script: deploy.sh
    on:
-      tags: false
+      branches:
+         except:
+            - master
