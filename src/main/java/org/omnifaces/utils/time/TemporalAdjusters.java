@@ -12,8 +12,9 @@ public final class TemporalAdjusters {
 	}
 
 	public static TemporalAdjuster nextDayOfMonth(int dayOfMonth) {
+		validateDayOfMonth(dayOfMonth);
+
 		return temporal -> {
-			// TODO assert that dayOfMonth is actually valid
 			int currentDayOfMonth = temporal.get(DAY_OF_MONTH);
 
 			if(currentDayOfMonth >= dayOfMonth || temporal.range(DAY_OF_MONTH).getMaximum() == currentDayOfMonth) {
@@ -32,4 +33,23 @@ public final class TemporalAdjusters {
 		};
 	}
 
+	public static TemporalAdjuster nextOrSameDayOfMonth(int dayOfMonth) {
+		validateDayOfMonth(dayOfMonth);
+
+		TemporalAdjuster nextDayOfMonth = nextDayOfMonth(dayOfMonth);
+
+		return temporal -> {
+			int currentDayOfMonth = temporal.get(DAY_OF_MONTH);
+
+			if (currentDayOfMonth == dayOfMonth || (currentDayOfMonth < dayOfMonth && currentDayOfMonth == temporal.range(DAY_OF_MONTH).getMaximum())) {
+				return temporal;
+			}
+
+			return temporal.with(nextDayOfMonth);
+		};
+	}
+
+	private static void validateDayOfMonth(int dayOfMonth) {
+		DAY_OF_MONTH.checkValidValue(dayOfMonth);
+	}
 }
