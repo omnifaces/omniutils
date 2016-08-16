@@ -39,6 +39,6 @@ public class TemporalAdjustersTest {
 
 		assertEquals(LocalDate.of(2016, 3, 31), LocalDate.of(2016, 3, 31).with(nextOrSameDayOfMonth(31)));
 
-		assertEquals(LocalDate.of(2016, 1, 1), LocalDate.of(2015, 12, 1).with(nextDayOfMonth(1)));
+		assertEquals(LocalDate.of(2015, 12, 1), LocalDate.of(2015, 12, 1).with(nextOrSameDayOfMonth(1)));
 	}
 }
