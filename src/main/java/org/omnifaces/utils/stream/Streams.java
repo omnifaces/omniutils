@@ -46,25 +46,25 @@ public class Streams {
 	}
 
 	/**
-	 * Returns a {@link Stream#flatMap(Function) flatMap} {@link Function} that only retains a instances of a given type and casts them to this type.
+	 * Returns a {@link java.util.stream.Stream#flatMap(Function) flatMap} {@link java.util.function.Function} that only retains a instances of a given type and casts them to this type.
 	 *
 	 * <p>
 	 *     Unlike other flatMap functions, this function will only return 0 or 1 result. If an instance passed to it
-	 *     is of the specified type, then the function will return a {@link Stream} with only this item, cast to this type.
-	 *     If the instance is not of this type, the function will return {@link Stream#empty()}.
+	 *     is of the specified type, then the function will return a {@link java.util.stream.Stream} with only this item, cast to this type.
+	 *     If the instance is not of this type, the function will return {@link java.util.stream.Stream#empty()}.
 	 *
 	 * <b>Example use</b>
 	 * Say we have a Stream&lt;X&gt; from which we want retain only all instances of Y, then could do the following to
 	 * obtain a Stream&lt;Y&gt;:
 	 * <code>
-	 *    Stream&ltX&gt; streamOfX = ...;
+	 *    Stream&lt;X&gt; streamOfX = ...;
 	 *    Stream&lt;Y&gt; streamOfY = streamOfX.flatMap(mapToType(Y.class));
 	 * </code>
 	 *
 	 * Which is the equivalent of this:
 	 * <code>
-	 *     streamOfX.filter(x -> x instanceof Y)
-	 *              .map(x -> (Y)x)
+	 *     streamOfX.filter(x -&gt; x instanceof Y)
+	 *              .map(x -&gt; (Y)x)
 	 * </code>
 	 * </p>
 	 *
