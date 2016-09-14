@@ -83,7 +83,7 @@ class AnnotationInvocationHandler implements InvocationHandler, Serializable {
 			case "annotationType":
 				return type;
 			case "equals":
-				return args.length > 0 && equals(args[0]);
+				return args.length > 0 && equals(proxy, args[0]);
 			case "hashCode":
 				return hashCode();
 			case "toString":
