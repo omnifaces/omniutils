@@ -10,7 +10,6 @@ import java.util.Objects;
 
 /**
  * {@link InvocationHandler} implementation that implements the base methods required for an annotation.
- * @param <T> The generic annotation type.
  */
 class AnnotationInvocationHandler implements InvocationHandler, Serializable {
 
