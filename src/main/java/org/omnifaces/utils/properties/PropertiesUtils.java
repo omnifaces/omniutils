@@ -221,16 +221,8 @@ public final class PropertiesUtils {
 			logger.log(SEVERE, "Error while loading settings.", e);
 		}
 	}
-
-	private static Optional<URL> getResource(String name) {
-		URL url = Thread.currentThread().getContextClassLoader().getResource(name);
-		if (url == null) {
-			url = PropertiesUtils.class.getClassLoader().getResource(name);
-		}
-		return Optional.ofNullable(url);
-	}
-
-	private static String getStage(String stageSystemPropertyName, String defaultStage) {
+	
+	public static String getStage(String stageSystemPropertyName, String defaultStage) {
 		String stage = getProperty(stageSystemPropertyName);
 		if (stage == null) {
 			if (defaultStage == null) {
@@ -242,5 +234,15 @@ public final class PropertiesUtils {
 
 		return stage;
 	}
+
+	private static Optional<URL> getResource(String name) {
+		URL url = Thread.currentThread().getContextClassLoader().getResource(name);
+		if (url == null) {
+			url = PropertiesUtils.class.getClassLoader().getResource(name);
+		}
+		return Optional.ofNullable(url);
+	}
+
+
 
 }
