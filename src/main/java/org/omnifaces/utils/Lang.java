@@ -1,5 +1,9 @@
 package org.omnifaces.utils;
 
+import static java.lang.Character.isSpaceChar;
+import static java.lang.Character.toLowerCase;
+import static java.lang.Character.toUpperCase;
+
 import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Map;
@@ -189,4 +193,20 @@ public final class Lang {
 	public static boolean containsIsoControlCharacters(String string) {
 		return string.codePoints().anyMatch(Character::isISOControl);
 	}
+
+	/**
+	 * Converts given string to title case.
+	 * @param string String to be converted to title case.
+	 * @return The given string converted to title case.
+	 */
+	public static String toTitleCase(String string) {
+		if (string == null) {
+			return null;
+		}
+
+		return string.codePoints().collect(StringBuilder::new, (sb, cp) -> {
+			sb.appendCodePoint(sb.length() == 0 || isSpaceChar(sb.charAt(sb.length() - 1)) ? toUpperCase(cp) : toLowerCase(cp));
+		}, (sb1, sb2) -> {}).toString();
+	}
+
 }
