@@ -57,26 +57,46 @@ public final class Images {
 	}
 
 	public static BufferedImage cropImage(BufferedImage image, int desiredWidth, int desiredHeight) {
-		boolean cropHorizontal = (image.getHeight() == desiredHeight);
+		boolean cropHorizontally = (image.getWidth() > desiredWidth);
 
-		int x = cropHorizontal ? (image.getWidth() - desiredWidth) / 2 : 0;
-		int y = cropHorizontal ? 0 : (image.getHeight() - desiredHeight) / 2;
+		int x = cropHorizontally ? (image.getWidth() - desiredWidth) / 2 : 0;
+		int y = cropHorizontally ? 0 : (image.getHeight() - desiredHeight) / 2;
 
 		return image.getSubimage(x, y, desiredWidth, desiredHeight);
 	}
 
+	/**
+	 * Examples of aspect ratios:
+	 * 1:1 = 1.0 (will delegate to cropToSquareImage())
+	 * 4:3 = 1.33333
+	 * 3:2 = 1.5
+	 * 16:9 = 1.77778
+	 */
+	public static BufferedImage cropImage(BufferedImage image, double desiredAspectRatio) {
+		if (desiredAspectRatio == 1.0) {
+			return cropToSquareImage(image);
+		}
+
+		double currentAspectRatio = image.getWidth() * 1.0 / image.getHeight();
+
+		if (currentAspectRatio == desiredAspectRatio) {
+			return image;
+		}
+
+		boolean cropHorizontally = (currentAspectRatio > desiredAspectRatio);
+
+		int desiredWidth = cropHorizontally ? (int) (image.getHeight() * desiredAspectRatio) : image.getWidth();
+		int desiredHeight = cropHorizontally ? image.getHeight() : (int) (image.getWidth() / desiredAspectRatio);
+
+		return cropImage(image, desiredWidth, desiredHeight);
+	}
+
 	public static BufferedImage cropToSquareImage(BufferedImage image) {
-		boolean cropHorizontal = image.getWidth() > image.getHeight();
+		boolean cropHorizontally = (image.getWidth() > image.getHeight());
 
-		int largestSize = cropHorizontal ? image.getWidth() : image.getHeight();
-		int smallestSize = cropHorizontal ? image.getHeight() : image.getWidth();
+		int desiredSize = cropHorizontally ? image.getHeight() : image.getWidth();
 
-		int cropStart = (largestSize / 2) - (smallestSize / 2);
-
-		int x = cropHorizontal ? cropStart : 0;
-		int y = cropHorizontal ? 0 : cropStart;
-
-		return image.getSubimage(x, y, smallestSize, smallestSize);
+		return cropImage(image, desiredSize, desiredSize);
 	}
 
 	public static BufferedImage progressiveBilinearDownscale(BufferedImage image, int desiredWidth, int desiredHeight) {
