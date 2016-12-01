@@ -1,4 +1,4 @@
-package org.omnifaces.utils.io;
+package org.omnifaces.utils.image;
 
 import static java.awt.RenderingHints.KEY_INTERPOLATION;
 import static java.awt.RenderingHints.VALUE_INTERPOLATION_BILINEAR;
