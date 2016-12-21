@@ -58,7 +58,7 @@ public class Streams {
 		return range(start, endExclusive, incrementer, naturalOrder());
 	}
 
-	public static <T extends Comparable<T>> Stream<T> range(T start, T endExclusive, Function<? super T, ? extends T> incrementer, Comparator<? super T> comparator) {
+	public static <T> Stream<T> range(T start, T endExclusive, Function<? super T, ? extends T> incrementer, Comparator<? super T> comparator) {
 		Iterator<T> iterator = new RangeIterator<>(start, endExclusive, comparator, incrementer);
 
 		Spliterator<T> spliterator = spliteratorUnknownSize(iterator, ORDERED | SORTED | DISTINCT | NONNULL | IMMUTABLE);
