@@ -1,5 +1,14 @@
 package org.omnifaces.utils.stream;
 
+import static java.util.Comparator.naturalOrder;
+import static java.util.Spliterator.DISTINCT;
+import static java.util.Spliterator.IMMUTABLE;
+import static java.util.Spliterator.NONNULL;
+import static java.util.Spliterator.ORDERED;
+import static java.util.Spliterator.SORTED;
+import static java.util.Spliterators.spliteratorUnknownSize;
+
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -42,7 +51,19 @@ public class Streams {
 		ZippedIterator<T, U, R> zippedIterator = new ZippedIterator<>(Spliterators.iterator(spliterator1), Spliterators.iterator(spliterator2), zipFunction);
 
 		// TODO determine and set flags
-		return StreamSupport.stream(Spliterators.spliteratorUnknownSize(zippedIterator, 0), false);
+		return StreamSupport.stream(spliteratorUnknownSize(zippedIterator, 0), false);
+	}
+
+	public static <T extends Comparable<T>> Stream<T> range(T start, T endExclusive, Function<? super T, ? extends T> incrementer) {
+		return range(start, endExclusive, incrementer, naturalOrder());
+	}
+
+	public static <T extends Comparable<T>> Stream<T> range(T start, T endExclusive, Function<? super T, ? extends T> incrementer, Comparator<? super T> comparator) {
+		Iterator<T> iterator = new RangeIterator<>(start, endExclusive, comparator, incrementer);
+
+		Spliterator<T> spliterator = spliteratorUnknownSize(iterator, ORDERED | SORTED | DISTINCT | NONNULL | IMMUTABLE);
+
+		return StreamSupport.stream(spliterator, false);
 	}
 
 	/**
