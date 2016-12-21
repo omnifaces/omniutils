@@ -1,12 +1,13 @@
 package org.omnifaces.utils.stream;
 
+import static org.omnifaces.utils.function.Predicates.isLessThan;
+import static org.omnifaces.utils.function.Predicates.isLessThanOrEqual;
+
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.function.Function;
 import java.util.function.Predicate;
-
-import org.omnifaces.utils.function.Predicates;
 
 class RangeIterator<T> implements Iterator<T> {
 
@@ -14,9 +15,9 @@ class RangeIterator<T> implements Iterator<T> {
 	private final Predicate<T> hasNext;
 	private final Function<? super T, ? extends T> incrementer;
 
-	RangeIterator(T startInclusive, T endExclusive, Comparator<? super T> comparator, Function<? super T, ? extends T> incrementer) {
-		this.next = startInclusive;
-		this.hasNext = Predicates.isLessThan(endExclusive, comparator);
+	RangeIterator(T start, T end, boolean rangeClosed, Comparator<? super T> comparator, Function<? super T, ? extends T> incrementer) {
+		this.next = start;
+		this.hasNext = rangeClosed ? isLessThanOrEqual(end, comparator) : isLessThan(end, comparator);
 		this.incrementer = incrementer;
 	}
 

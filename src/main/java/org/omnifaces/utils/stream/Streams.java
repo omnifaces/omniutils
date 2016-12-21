@@ -54,12 +54,26 @@ public class Streams {
 		return StreamSupport.stream(spliteratorUnknownSize(zippedIterator, 0), false);
 	}
 
+
+	public static <T extends Comparable<T>> Stream<T> rangeClosed(T start, T endInclusive, Function<? super T, ? extends T> incrementer) {
+		return rangeClosed(start, endInclusive, incrementer, Comparator.naturalOrder());
+	}
+
+	public static <T> Stream<T> rangeClosed(T start, T endInclusive, Function<? super T, ? extends T> incrementer, Comparator<? super T> comparator) {
+		return rangeStream(start, endInclusive, true, incrementer, comparator);
+	}
+
 	public static <T extends Comparable<T>> Stream<T> range(T start, T endExclusive, Function<? super T, ? extends T> incrementer) {
 		return range(start, endExclusive, incrementer, naturalOrder());
 	}
 
 	public static <T> Stream<T> range(T start, T endExclusive, Function<? super T, ? extends T> incrementer, Comparator<? super T> comparator) {
-		Iterator<T> iterator = new RangeIterator<>(start, endExclusive, comparator, incrementer);
+		return rangeStream(start, endExclusive, false, incrementer, comparator);
+	}
+
+	private static <T> Stream<T> rangeStream(T start, T endExclusive, boolean rangeClosed, Function<? super T, ? extends T> incrementer,
+			Comparator<? super T> comparator) {
+		Iterator<T> iterator = new RangeIterator<>(start, endExclusive, rangeClosed, comparator, incrementer);
 
 		Spliterator<T> spliterator = spliteratorUnknownSize(iterator, ORDERED | SORTED | DISTINCT | NONNULL | IMMUTABLE);
 
