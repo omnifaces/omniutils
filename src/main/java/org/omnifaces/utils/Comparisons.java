@@ -13,6 +13,7 @@ public final class Comparisons {
 		return min(naturalOrder(), t1, t2);
 	}
 
+	@SafeVarargs
 	public static <T extends Comparable<T>> T min(T t1, T t2, T... ts) {
 		return min(naturalOrder(), t1, t2, ts);
 	}
@@ -25,6 +26,7 @@ public final class Comparisons {
 		return t2;
 	}
 
+	@SafeVarargs
 	private static <T extends Comparable<T>> T min(Comparator<T> tComparator, T t1, T t2, T... ts) {
 		T min = min(tComparator, t1, t2);
 
@@ -39,6 +41,7 @@ public final class Comparisons {
 		return max(naturalOrder(), t1, t2);
 	}
 
+	@SafeVarargs
 	public static <T extends Comparable<T>> T max(T t1, T t2, T... ts) {
 		return max(naturalOrder(), t1, t2, ts);
 	}
@@ -51,6 +54,7 @@ public final class Comparisons {
 		return t2;
 	}
 
+	@SafeVarargs
 	private static <T extends Comparable<T>> T max(Comparator<T> comparator, T t1, T t2, T... ts) {
 		T max = max(comparator, t1, t2);
 
