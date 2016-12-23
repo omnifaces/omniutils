@@ -7,14 +7,17 @@ addons:
       packages:
          - oracle-java9-installer
 
-before_install:
-   - wget http://www-us.apache.org/dist/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz
-   - tar zxf apache-maven-3.3.9-bin.tar.gz
-   - remove_dir_from_path $M2_HOME/bin
+install: true
+
+before_script:
    - export PATH=$M2_HOME/bin:$PATH
    - remove_dir_from_path $JAVA_HOME/bin
    - export JAVA_HOME=/usr/lib/jvm/java-9-oracle
    - export PATH=$JAVA_HOME/bin:$M2_HOME/bin:$PATH
+   - export MAVEN_SKIP_RC="true"
+
+script:
+   - mvn compile
 
 deploy:
    provider: script
