@@ -48,6 +48,9 @@ public abstract class Range<N extends Number> implements Serializable {
 		else if (type == Integer.class) {
 			range = new IntegerRange();
 		}
+		else if (type == BigDecimal.class) {
+			range = new BigDecimalRange();
+		}
 		else {
 			throw new UnsupportedOperationException(type + " range not supported");
 		}
