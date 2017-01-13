@@ -205,7 +205,7 @@ public final class Lang {
 	/**
 	 * Returns <code>true</code> if the given string ends with one of the given suffixes.
 	 * @param string The string to be checked if it ends with one of the given suffixes.
-	 * @param prefixes The argument list of suffixes to be checked.
+	 * @param suffixes The argument list of suffixes to be checked.
 	 * @return <code>true</code> if the given string ends with one of the given suffixes.
 	 */
 	public static boolean endsWithOneOf(String string, String... suffixes) {
@@ -224,7 +224,7 @@ public final class Lang {
 	 * @param regex The regular expression to which given string is to be matched.
 	 * @param replacement The string to be substituted for the last match.
 	 * @return The resulting string.
-	 * @see http://stackoverflow.com/a/2282998
+	 * @author http://stackoverflow.com/a/2282998
 	 */
     public static String replaceLast(String string, String regex, String replacement) {
         return string.replaceFirst("(?s)(.*)" + regex, "$1" + replacement);
@@ -261,6 +261,7 @@ public final class Lang {
 	 * Escape given string as valid {@link Properties} entry value.
 	 * @param string String to be escaped as valid {@link Properties} entry value.
 	 * @return The given string escaped as valid {@link Properties} entry value.
+	 * @throws IOException When appending a character fails.
 	 */
 	public static String escapeAsProperty(String string) throws IOException {
 		Appendable builder = new StringBuilder(string.length());
