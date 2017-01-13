@@ -187,6 +187,50 @@ public final class Lang {
 	}
 
 	/**
+	 * Returns <code>true</code> if the given string starts with one of the given prefixes.
+	 * @param string The string to be checked if it starts with one of the given prefixes.
+	 * @param prefixes The argument list of prefixes to be checked.
+	 * @return <code>true</code> if the given string starts with one of the given prefixes.
+	 */
+	public static boolean startsWithOneOf(String string, String... prefixes) {
+		for (String prefix : prefixes) {
+			if (string.startsWith(prefix)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Returns <code>true</code> if the given string ends with one of the given suffixes.
+	 * @param string The string to be checked if it ends with one of the given suffixes.
+	 * @param prefixes The argument list of suffixes to be checked.
+	 * @return <code>true</code> if the given string ends with one of the given suffixes.
+	 */
+	public static boolean endsWithOneOf(String string, String... suffixes) {
+		for (String suffix : suffixes) {
+			if (string.endsWith(suffix)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+     * Replaces the last substring of given string that matches the given regular expression with the given replacement.
+	 * @param string The string to be replaced.
+	 * @param regex The regular expression to which given string is to be matched.
+	 * @param replacement The string to be substituted for the last match.
+	 * @return The resulting string.
+	 * @see http://stackoverflow.com/a/2282998
+	 */
+    public static String replaceLast(String string, String regex, String replacement) {
+        return string.replaceFirst("(?s)(.*)" + regex, "$1" + replacement);
+    }
+
+ 	/**
 	 * Returns <code>true</code> if the given string contains any ISO control characters.
 	 *
 	 * @param string the string to check for control characters
