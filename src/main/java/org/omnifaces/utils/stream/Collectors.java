@@ -6,6 +6,7 @@ import static java.util.function.Function.identity;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collector;
@@ -42,6 +43,17 @@ public final class Collectors {
 		return new ReversedStreamCollector<>();
 	}
 
+	/**
+	 * Returns a collector which will return the last element of a stream, if present.
+	 *
+	 * @param <T> The type of the elements
+	 *
+	 * @return An {@link Optional} containing the last element of the stream or {@link Optional#empty()} if the stream is empty.
+	 */
+	public static <T> Collector<T, ?, Optional<T>> findLast() {
+		return new FindLastCollector<>();
+	}
+
 	public static <T extends Comparable<T>> Collector<T, ?, Summary<T>> summary() {
 		return summaryBy(naturalOrder());
 	}
@@ -49,5 +61,4 @@ public final class Collectors {
 	public static <T> Collector<T, ?, Summary<T>> summaryBy(Comparator<? super T> comparator) {
 		return new SummaryCollector<>(comparator);
 	}
-
 }

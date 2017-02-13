@@ -4,10 +4,12 @@ import static java.lang.Character.isSpaceChar;
 import static java.lang.Character.toLowerCase;
 import static java.lang.Character.toUpperCase;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -185,6 +187,50 @@ public final class Lang {
 	}
 
 	/**
+	 * Returns <code>true</code> if the given string starts with one of the given prefixes.
+	 * @param string The string to be checked if it starts with one of the given prefixes.
+	 * @param prefixes The argument list of prefixes to be checked.
+	 * @return <code>true</code> if the given string starts with one of the given prefixes.
+	 */
+	public static boolean startsWithOneOf(String string, String... prefixes) {
+		for (String prefix : prefixes) {
+			if (string.startsWith(prefix)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Returns <code>true</code> if the given string ends with one of the given suffixes.
+	 * @param string The string to be checked if it ends with one of the given suffixes.
+	 * @param suffixes The argument list of suffixes to be checked.
+	 * @return <code>true</code> if the given string ends with one of the given suffixes.
+	 */
+	public static boolean endsWithOneOf(String string, String... suffixes) {
+		for (String suffix : suffixes) {
+			if (string.endsWith(suffix)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+     * Replaces the last substring of given string that matches the given regular expression with the given replacement.
+	 * @param string The string to be replaced.
+	 * @param regex The regular expression to which given string is to be matched.
+	 * @param replacement The string to be substituted for the last match.
+	 * @return The resulting string.
+	 * @author http://stackoverflow.com/a/2282998
+	 */
+    public static String replaceLast(String string, String regex, String replacement) {
+        return string.replaceFirst("(?s)(.*)" + regex, "$1" + replacement);
+    }
+
+ 	/**
 	 * Returns <code>true</code> if the given string contains any ISO control characters.
 	 *
 	 * @param string the string to check for control characters
@@ -207,6 +253,54 @@ public final class Lang {
 		return string.codePoints().collect(StringBuilder::new, (sb, cp) -> {
 			sb.appendCodePoint(sb.length() == 0 || isSpaceChar(sb.charAt(sb.length() - 1)) ? toUpperCase(cp) : toLowerCase(cp));
 		}, (sb1, sb2) -> {}).toString();
+	}
+
+
+
+	/**
+	 * Escape given string as valid {@link Properties} entry value.
+	 * @param string String to be escaped as valid {@link Properties} entry value.
+	 * @return The given string escaped as valid {@link Properties} entry value.
+	 * @throws IOException When appending a character fails.
+	 */
+	public static String escapeAsProperty(String string) throws IOException {
+		Appendable builder = new StringBuilder(string.length());
+
+		for (char c : string.toCharArray()) {
+			if ((c > 61) && (c < 127)) {
+				if (c == '\\') {
+					builder.append('\\');
+					builder.append('\\');
+					continue;
+				}
+				builder.append(c);
+				continue;
+			}
+			switch(c) {
+				case '\t':builder.append('\\'); builder.append('t');
+						  break;
+				case '\n':builder.append('\\'); builder.append('n');
+						  break;
+				case '\r':builder.append('\\'); builder.append('r');
+						  break;
+				case '\f':builder.append('\\'); builder.append('f');
+						  break;
+				case '=': // Fall through
+				case ':': // Fall through
+				case '#': // Fall through
+				case '!':
+					builder.append('\\'); builder.append(c);
+					break;
+				default:
+					if ((c < 0x0020) || (c > 0x007e)) {
+						builder.append(String.format("\\u%04x", (int) c));
+					} else {
+						builder.append(c);
+					}
+			}
+		}
+
+		return builder.toString();
 	}
 
 }
