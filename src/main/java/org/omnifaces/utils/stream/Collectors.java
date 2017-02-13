@@ -1,7 +1,9 @@
 package org.omnifaces.utils.stream;
 
+import static java.util.Comparator.naturalOrder;
 import static java.util.function.Function.identity;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -39,4 +41,13 @@ public final class Collectors {
 	public static <T> Collector<T, ?, Stream<T>> reversedStream() {
 		return new ReversedStreamCollector<>();
 	}
+
+	public static <T extends Comparable<T>> Collector<T, ?, Summary<T>> summary() {
+		return summaryBy(naturalOrder());
+	}
+
+	public static <T> Collector<T, ?, Summary<T>> summaryBy(Comparator<? super T> comparator) {
+		return new SummaryCollector<>(comparator);
+	}
+
 }
