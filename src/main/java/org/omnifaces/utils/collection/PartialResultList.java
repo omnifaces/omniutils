@@ -34,6 +34,11 @@ public class PartialResultList<E> implements List<E> {
 		this.estimatedTotalNumberOfResults = estimatedTotalNumberOfResults;
 	}
 
+	// QUICK HACK: For some reason column.xhtml wants this to be there
+	public Boolean isVisible(String field, Boolean visible) {
+		return true;
+	}
+	
 	@Override
 	public int size() {
 		return wrappedList.size();
