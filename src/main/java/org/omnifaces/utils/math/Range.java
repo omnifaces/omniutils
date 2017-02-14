@@ -131,4 +131,6 @@ public abstract class Range<N extends Number> implements Serializable {
 		this.max = max;
 	}
 
+	public abstract boolean contains(N number);
+
 }

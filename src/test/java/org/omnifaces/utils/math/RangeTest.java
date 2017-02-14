@@ -79,4 +79,18 @@ public class RangeTest {
 		assertNotEquals(longRange3, longRange4);
 	}
 
+	@Test
+	public void testContains() {
+		assertTrue(LongRange.of(0, 10).contains(0));
+		assertTrue(LongRange.of(0, 10).contains(10));
+		assertFalse(LongRange.of(0, 10).contains(11));
+		assertFalse(LongRange.of(0, 10).contains(-1));
+
+		assertTrue(LongRange.of(null, 10).contains(-1));
+		assertFalse(LongRange.of(null, 10).contains(11));
+
+		assertFalse(LongRange.of(0, null).contains(-1));
+		assertTrue(LongRange.of(0, null).contains(11));
+	}
+
 }

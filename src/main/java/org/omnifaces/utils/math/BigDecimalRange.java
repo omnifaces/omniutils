@@ -11,4 +11,19 @@ public class BigDecimalRange extends Range<BigDecimal> implements Serializable {
 		return (BigDecimalRange) Range.of(BigDecimal.class, min, max);
 	}
 
+	@Override
+	public boolean contains(BigDecimal number) {
+		if (getMin() != null) {
+			if (getMin().compareTo(number) > 0) {
+				return false;
+			}
+		}
+
+		if (getMax() != null) {
+			if (getMax().compareTo(number) < 0) {
+				return false;
+			}
+		}
+		return true;
+	}
 }
