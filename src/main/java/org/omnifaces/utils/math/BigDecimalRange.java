@@ -3,6 +3,7 @@ package org.omnifaces.utils.math;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+@Deprecated
 public class BigDecimalRange extends Range<BigDecimal> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -12,18 +13,12 @@ public class BigDecimalRange extends Range<BigDecimal> implements Serializable {
 	}
 
 	@Override
-	public boolean contains(BigDecimal number) {
-		if (getMin() != null) {
-			if (getMin().compareTo(number) > 0) {
-				return false;
-			}
-		}
+	public org.omnifaces.utils.data.Range withMin(BigDecimal min) {
+		return of(min, getMax());
+	}
 
-		if (getMax() != null) {
-			if (getMax().compareTo(number) < 0) {
-				return false;
-			}
-		}
-		return true;
+	@Override
+	public org.omnifaces.utils.data.Range withMax(BigDecimal max) {
+		return of(getMin(), max);
 	}
 }

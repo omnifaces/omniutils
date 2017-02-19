@@ -2,6 +2,7 @@ package org.omnifaces.utils.math;
 
 import java.io.Serializable;
 
+@Deprecated
 public class IntegerRange extends Range<Integer> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -11,19 +12,12 @@ public class IntegerRange extends Range<Integer> implements Serializable {
 	}
 
 	@Override
-	public boolean contains(Integer number) {
-		if (getMin() != null) {
-			if (getMin().compareTo(number) > 0) {
-				return false;
-			}
-		}
+	public org.omnifaces.utils.data.Range withMin(Integer min) {
+		return of(min, getMax());
+	}
 
-		if (getMax() != null) {
-			if (getMax().compareTo(number) < 0) {
-				return false;
-			}
-		}
-
-		return true;
+	@Override
+	public org.omnifaces.utils.data.Range withMax(Integer max) {
+		return of(getMin(), max);
 	}
 }
