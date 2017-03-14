@@ -286,9 +286,7 @@ public final class Lang {
 				case '\f':builder.append('\\'); builder.append('f');
 						  break;
 				case '=': // Fall through
-				case ':': // Fall through
-				case '#': // Fall through
-				case '!':
+				case ':':
 					builder.append('\\'); builder.append(c);
 					break;
 				default:
