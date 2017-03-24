@@ -202,8 +202,16 @@ public final class PropertiesUtils {
 	}
 
 	public static void loadPropertiesFromUrl(URL url, Map<? super String, ? super String> settings, PropertiesFormat propertiesFormat) {
+		try {
+			loadPropertiesFromStream(url.openStream(), url.toString(), settings, propertiesFormat);
+		} catch (IOException e) {
+			logger.log(SEVERE, "Error while loading settings.", e);
+		}
+	}
+	
+	public static void loadPropertiesFromStream(InputStream in, String locationDescription, Map<? super String, ? super String> settings, PropertiesFormat propertiesFormat) {
 		Properties properties = new Properties();
-		try (InputStream in = url.openStream()) {
+		try {
 
 			if (propertiesFormat == XML) {
 				properties.loadFromXML(in);
@@ -211,7 +219,7 @@ public final class PropertiesUtils {
 				properties.load(in);
 			}
 
-			logger.info(String.format("Loaded %d settings from %s.", properties.size(), url));
+			logger.info(String.format("Loaded %d settings from %s.", properties.size(), locationDescription));
 
 			for (Entry<?, ?> entry : properties.entrySet()) {
 				settings.put((String) entry.getKey(), (String) entry.getValue());
