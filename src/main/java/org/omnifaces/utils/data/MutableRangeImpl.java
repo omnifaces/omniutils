@@ -10,13 +10,15 @@ class MutableRangeImpl<N> extends AbstractRange<N> implements MutableRange<N> {
 	private N min;
 	private N max;
 
+	private boolean minInclusive;
 	private boolean maxInclusive;
 
 	private final Comparator<? super N> comparator;
 
-	MutableRangeImpl(N min, N max, boolean maxInclusive, Comparator<? super N> comparator) {
+	MutableRangeImpl(N min, N max, boolean minInclusive, boolean maxInclusive, Comparator<? super N> comparator) {
 		this.min = min;
 		this.max = max;
+		this.minInclusive = minInclusive;
 		this.maxInclusive = maxInclusive;
 		this.comparator = comparator;
 	}
@@ -53,14 +55,24 @@ class MutableRangeImpl<N> extends AbstractRange<N> implements MutableRange<N> {
 
 	@Override
 	public Range<N> withMin(N newMin) {
-		return new MutableRangeImpl<>(requireNonNull(newMin), max, maxInclusive, comparator);
+		return new MutableRangeImpl<>(requireNonNull(newMin), max, minInclusive, maxInclusive, comparator);
 	}
 
 	@Override
 	public Range<N> withMax(N newMax) {
-		return new MutableRangeImpl<>(min, requireNonNull(newMax), maxInclusive, comparator);
+		return new MutableRangeImpl<>(min, requireNonNull(newMax), minInclusive, maxInclusive, comparator);
 	}
 
+	@Override
+	public Range<N> withMinInclusive(boolean newMinInclusive) {
+		return new MutableRangeImpl<>(min, max, newMinInclusive, maxInclusive, comparator);
+	}
+	
+	@Override
+	public Range<N> withMaxInclusive(boolean newMaxInclusive) {
+		return new MutableRangeImpl<>(min, max, minInclusive, newMaxInclusive, comparator);
+	}
+	
 	@Override
 	protected int compare(N left, N right) {
 		return Objects.compare(left, right, comparator);

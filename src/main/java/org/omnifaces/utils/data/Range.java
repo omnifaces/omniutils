@@ -33,6 +33,10 @@ public interface Range<N> {
 	Range<N> withMin(N min);
 
 	Range<N> withMax(N max);
+	
+	Range<N> withMinInclusive(boolean minInclusive);
+	
+	Range<N> withMaxInclusive(boolean maxInclusive);
 
 	default Stream<N> stream(UnaryOperator<N> incrementer) {
 		N min = requireNonNull(getMin());
@@ -64,43 +68,43 @@ public interface Range<N> {
 	}
 
 	static <N extends Comparable<N>> Range<N> of(N min, N max) {
-		return new ImmutableRangeImpl<>(min, max, false, naturalOrder());
+		return new ImmutableRangeImpl<>(min, max, true, false, naturalOrder());
 	}
 
 	static <N> Range<N> of(N min, N max, Comparator<? super N> comparator) {
-		return new ImmutableRangeImpl<>(min, max, false, comparator);
+		return new ImmutableRangeImpl<>(min, max, true, false, comparator);
 	}
 
 	static Range<Double> ofDouble(double min, double max) {
-		return new ImmutableRangeImpl<>(min, max, false, naturalOrder());
+		return new ImmutableRangeImpl<>(min, max, true, false, naturalOrder());
 	}
 
 	static Range<Integer> ofInteger(int min, int max) {
-		return new ImmutableRangeImpl<>(min, max, false, naturalOrder());
+		return new ImmutableRangeImpl<>(min, max, true, false, naturalOrder());
 	}
 
 	static Range<Long> ofLong(long min, long max) {
-		return new ImmutableRangeImpl<>(min, max, false, naturalOrder());
+		return new ImmutableRangeImpl<>(min, max, true, false, naturalOrder());
 	}
 
 	static <N extends Number & Comparable<N>> Range<N> ofClosed(N min, N max) {
-		return new ImmutableRangeImpl<>(min, max, true, naturalOrder());
+		return new ImmutableRangeImpl<>(min, max, true, true, naturalOrder());
 	}
 
 	static <N> Range<N> ofClosed(N min, N max, Comparator<? super N> comparator) {
-		return new ImmutableRangeImpl<>(min, max, true, comparator);
+		return new ImmutableRangeImpl<>(min, max, true, true, comparator);
 	}
 
 	static Range<Double> ofDoubleClosed(double min, double max) {
-		return new ImmutableRangeImpl<>(min, max, true, naturalOrder());
+		return new ImmutableRangeImpl<>(min, max, true, true, naturalOrder());
 	}
 
 	static Range<Integer> ofIntegerClosed(int min, int max) {
-		return new ImmutableRangeImpl<>(min, max, true, naturalOrder());
+		return new ImmutableRangeImpl<>(min, max, true, true, naturalOrder());
 	}
 
 	static Range<Long> ofLongClosed(long min, long max) {
-		return new ImmutableRangeImpl<>(min, max, true, naturalOrder());
+		return new ImmutableRangeImpl<>(min, max, true, true, naturalOrder());
 	}
 
 
