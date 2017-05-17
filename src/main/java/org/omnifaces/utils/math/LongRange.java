@@ -12,6 +12,11 @@ public class LongRange extends Range<Long> implements Serializable {
 	}
 
 	@Override
+	protected LongRange newInstance() {
+		return new LongRange();
+	}
+	
+	@Override
 	public org.omnifaces.utils.data.Range withMin(Long min) {
 		return of(min, getMax());
 	}

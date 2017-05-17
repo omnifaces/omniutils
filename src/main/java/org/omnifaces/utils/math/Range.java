@@ -15,6 +15,9 @@ public abstract class Range<N extends Number & Comparable<N>> extends org.omnifa
 
 	private static final long serialVersionUID = 1L;
 
+	private boolean minInclusive = true;
+	private boolean maxInclusive = true;
+	
 	private N min;
 	private N max;
 
@@ -72,11 +75,6 @@ public abstract class Range<N extends Number & Comparable<N>> extends org.omnifa
 		return Objects.compare(left, right, naturalOrder());
 	}
 
-	@Override
-	public String toString() {
-		return "[" + getMin() + ".." + getMax() + "]";
-	}
-
 	public N getMin() {
 		return min;
 	}
@@ -100,6 +98,8 @@ public abstract class Range<N extends Number & Comparable<N>> extends org.omnifa
 
 		this.max = max;
 	}
+	
+	protected abstract Range<N> newInstance();
 
 	@Override
 	public boolean isMinInclusive() {
@@ -111,13 +111,34 @@ public abstract class Range<N extends Number & Comparable<N>> extends org.omnifa
 		return true;
 	}
 	
+	public void setMinInclusive(boolean minInclusive) {
+		this.minInclusive = minInclusive;
+	}
+	
+	public void setMaxInclusive(boolean maxInclusive) {
+		this.maxInclusive = maxInclusive;
+	}
+	
 	@Override 
 	public Range<N> withMinInclusive(boolean newMinInclusive) {
-		throw new UnsupportedOperationException("Not yet implemented");
+		Range<N> newRange = newInstance();
+		
+		newRange.setMin(min);
+		newRange.setMax(max);
+		newRange.setMinInclusive(newMinInclusive);
+		newRange.setMaxInclusive(maxInclusive);
+		
+		return newRange;
 	}
 	
 	@Override
 	public Range<N> withMaxInclusive(boolean newMaxInclusive) {
-		throw new UnsupportedOperationException("Not yet implemented");
+		Range<N> newRange = newInstance();
+		newRange.setMin(min);
+		newRange.setMax(max);
+		newRange.setMinInclusive(minInclusive);
+		newRange.setMaxInclusive(newMaxInclusive);
+		
+		return newRange;
 	}
 }
