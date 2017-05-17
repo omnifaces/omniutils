@@ -16,14 +16,6 @@ public class BigDecimalRange extends Range<BigDecimal> implements Serializable {
 	protected BigDecimalRange newInstance() {
 		return new BigDecimalRange();
 	}
-	
-	@Override
-	public org.omnifaces.utils.data.Range withMin(BigDecimal min) {
-		return of(min, getMax());
-	}
 
-	@Override
-	public org.omnifaces.utils.data.Range withMax(BigDecimal max) {
-		return of(getMin(), max);
-	}
 }
+

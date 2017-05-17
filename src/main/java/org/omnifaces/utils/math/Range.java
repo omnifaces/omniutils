@@ -17,7 +17,7 @@ public abstract class Range<N extends Number & Comparable<N>> extends org.omnifa
 
 	private boolean minInclusive = true;
 	private boolean maxInclusive = true;
-	
+
 	private N min;
 	private N max;
 
@@ -98,7 +98,7 @@ public abstract class Range<N extends Number & Comparable<N>> extends org.omnifa
 
 		this.max = max;
 	}
-	
+
 	protected abstract Range<N> newInstance();
 
 	@Override
@@ -110,35 +110,41 @@ public abstract class Range<N extends Number & Comparable<N>> extends org.omnifa
 	public boolean isMaxInclusive() {
 		return true;
 	}
-	
+
 	public void setMinInclusive(boolean minInclusive) {
 		this.minInclusive = minInclusive;
 	}
-	
+
 	public void setMaxInclusive(boolean maxInclusive) {
 		this.maxInclusive = maxInclusive;
 	}
-	
-	@Override 
+
+	@Override
 	public Range<N> withMinInclusive(boolean newMinInclusive) {
-		Range<N> newRange = newInstance();
-		
-		newRange.setMin(min);
-		newRange.setMax(max);
-		newRange.setMinInclusive(newMinInclusive);
-		newRange.setMaxInclusive(maxInclusive);
-		
-		return newRange;
+		return newInstance(min, max, newMinInclusive, maxInclusive);
 	}
-	
+
 	@Override
 	public Range<N> withMaxInclusive(boolean newMaxInclusive) {
+		return newInstance(min, max, minInclusive, newMaxInclusive);
+	}
+
+	public Range<N> withMin(N newMin) {
+		return newInstance(newMin, max, minInclusive, maxInclusive);
+	}
+
+	public Range<N> withMax(N newMax) {
+		return newInstance(min, newMax, minInclusive, maxInclusive);
+	}
+
+	private Range<N> newInstance(N min, N max, boolean minInclusive, boolean maxInclusive) {
 		Range<N> newRange = newInstance();
+
 		newRange.setMin(min);
 		newRange.setMax(max);
 		newRange.setMinInclusive(minInclusive);
-		newRange.setMaxInclusive(newMaxInclusive);
-		
+		newRange.setMaxInclusive(maxInclusive);
+
 		return newRange;
 	}
 }
