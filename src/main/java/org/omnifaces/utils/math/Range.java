@@ -112,12 +112,12 @@ public abstract class Range<N extends Number & Comparable<N>> extends org.omnifa
 	}
 	
 	@Override 
-	public Range<N> withMinInclusive() {
+	public Range<N> withMinInclusive(boolean newMinInclusive) {
 		throw new UnsupportedOperationException("Not yet implemented");
 	}
 	
 	@Override
-	public Range<N> withMaxInclusive() {
+	public Range<N> withMaxInclusive(boolean newMaxInclusive) {
 		throw new UnsupportedOperationException("Not yet implemented");
 	}
 }
