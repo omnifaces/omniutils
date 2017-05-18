@@ -29,7 +29,7 @@ public interface MutableRange<N> extends Range<N> {
 		return new MutableRangeImpl<>(min, max, true, false, naturalOrder());
 	}
 
-	static <N extends Number & Comparable<N>> MutableRange<N> ofClosed(N min, N max) {
+	static <N extends Comparable<N>> MutableRange<N> ofClosed(N min, N max) {
 		return new MutableRangeImpl<>(min, max, true, true, naturalOrder());
 	}
 

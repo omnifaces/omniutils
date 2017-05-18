@@ -26,18 +26,79 @@ public interface Range<N> {
 
 	boolean isMaxInclusive();
 
+	/**
+	 * Check if the given range intersects the current range.
+	 *
+	 * @param other
+	 * 		the range to check against the current range
+	 *
+	 * @return <code>true</code> if both ranges intersect and <code>false</code> otherwise
+	 */
 	boolean intersects(Range<N> other);
 
-	boolean contains(N number);
+	/**
+	 * Check if a given value is contained within this range
+	 *
+	 * @param value
+	 * 		the value to check
+	 *
+	 * @return <code>true</code> if the value is contained by this range and <code>false</code> otherwise
+	 */
+	boolean contains(N value);
 
+	/**
+	 * Create a copy of the current range with the given min value.
+	 *
+	 * @param min
+	 * 		the new min value for the copy
+	 *
+	 * @return a copy of the current range
+	 */
 	Range<N> withMin(N min);
 
+	/**
+	 * Create a copy of the current range with the given max value.
+	 *
+	 * @param max
+	 * 		the new max value for the copy
+	 *
+	 * @return a copy of the current range
+	 */
 	Range<N> withMax(N max);
-	
+
+	/**
+	 * Create a copy of the current range where the min value will be either inclusive or exclusive.
+	 *
+	 * @param minInclusive
+	 * 		boolean indicating if the min value should be inclusive or exclusive
+	 *
+	 * @return a copy of the current range
+	 */
 	Range<N> withMinInclusive(boolean minInclusive);
-	
+
+	/**
+	 * Create a copy of the current range where the max value will be either inclusive or exclusive.
+	 *
+	 * @param maxInclusive
+	 * 		boolean indicating if the max value should be inclusive or exclusive
+	 *
+	 * @return a copy of the current range
+	 */
 	Range<N> withMaxInclusive(boolean maxInclusive);
 
+	/**
+	 * Return a {@link Stream} containing all values contained by the range, with a given incrementer.
+	 * <p>
+	 * This method should not return the min or max value if they are exclusive.
+	 * <p>
+	 * The default implementation will apply the incrementer repeatedly on the current value, starting with the min value and will continue
+	 * as long as {@link Range#contains(Object)} returns true.
+	 *
+	 * @param incrementer
+	 * 		the incrementer to use to determine the next value
+	 *
+	 * @return a stream containing all values within the range
+	 */
 	default Stream<N> stream(UnaryOperator<N> incrementer) {
 		N min = requireNonNull(getMin());
 
@@ -87,7 +148,7 @@ public interface Range<N> {
 		return new ImmutableRangeImpl<>(min, max, true, false, naturalOrder());
 	}
 
-	static <N extends Number & Comparable<N>> Range<N> ofClosed(N min, N max) {
+	static <N extends Comparable<N>> Range<N> ofClosed(N min, N max) {
 		return new ImmutableRangeImpl<>(min, max, true, true, naturalOrder());
 	}
 

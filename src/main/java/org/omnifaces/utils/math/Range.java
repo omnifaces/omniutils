@@ -10,6 +10,12 @@ import java.util.Objects;
 
 import org.omnifaces.utils.data.MutableRange;
 
+/**
+ * An abstract base class for ranges of numbers.
+ *
+ * @deprecated This class has been replaced by the {@link org.omnifaces.utils.data.Range} and {@link MutableRange} interfaces, please use those instead
+ * @param <N> the
+ */
 @Deprecated
 public abstract class Range<N extends Number & Comparable<N>> extends org.omnifaces.utils.data.AbstractRange<N> implements MutableRange<N>, Serializable {
 
@@ -21,6 +27,23 @@ public abstract class Range<N extends Number & Comparable<N>> extends org.omnifa
 	private N min;
 	private N max;
 
+	/**
+	 * Creates a new range with the given min and max values.
+	 *
+	 * @param min
+	 * 		the min value
+	 * @param max
+	 * 		the max value
+	 * @param <N>
+	 * 		the generic type of the min and max values
+	 *
+	 * @return a new range
+	 *
+	 * @throws NullPointerException
+	 * 		if both min and max are null
+	 * @deprecated Please use {@link org.omnifaces.utils.data.Range#ofClosed(Comparable, Comparable)} or {@link MutableRange#ofClosed(Comparable,
+	 * Comparable)} instead
+	 */
 	@SuppressWarnings("unchecked")
 	public static <N extends Number & Comparable<N>> Range<N> of(N min, N max) {
 		if (min == null && max == null) {
@@ -31,6 +54,24 @@ public abstract class Range<N extends Number & Comparable<N>> extends org.omnifa
 		return of(type, min, max);
 	}
 
+	/**
+	 * Creates a new fully closed range for the given type and min and max values.
+	 *
+	 * @param type
+	 * 		the type of the min and max values
+	 * @param min
+	 * 		the min value
+	 * @param max
+	 * 		the max value
+	 * @param <N>
+	 * 		the type of the min and max values
+	 *
+	 * @return a new range instance with the given min and max
+	 *
+	 * @see MutableRange
+	 * @see org.omnifaces.utils.data.Range
+	 * @deprecated Use {@link org.omnifaces.utils.data.Range#ofClosed(Comparable, Comparable)} or {@link MutableRange#ofClosed(Comparable, Comparable)} instead.
+	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <N extends Number & Comparable<N>> Range<N> of(Class<N> type, N min, N max) {
 		Range range;
