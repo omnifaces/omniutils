@@ -1,35 +1,51 @@
 package org.omnifaces.utils.math;
 
+import static java.util.Comparator.naturalOrder;
 import static java.util.Objects.requireNonNull;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
-import java.util.Comparator;
 import java.util.Objects;
 
-public abstract class Range<N extends Number> implements Serializable {
+import org.omnifaces.utils.data.MutableRange;
+
+/**
+ * An abstract base class for ranges of numbers.
+ *
+ * @deprecated This class has been replaced by the {@link org.omnifaces.utils.data.Range} and {@link MutableRange} interfaces, please use those instead
+ * @param <N> the
+ */
+@Deprecated
+public abstract class Range<N extends Number & Comparable<N>> extends org.omnifaces.utils.data.AbstractRange<N> implements MutableRange<N>, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final Comparator<Number> NUMBER_COMPARATOR = new Comparator<Number>() {
-
-		@Override
-		public int compare(Number left, Number right) {
-			return (left == null || right == null) ? 0 : toBigDecimal(left).compareTo(toBigDecimal(right));
-		}
-
-		private BigDecimal toBigDecimal(Number number) {
-			return new BigDecimal(number.toString());
-		}
-
-	};
+	private boolean minInclusive = true;
+	private boolean maxInclusive = true;
 
 	private N min;
 	private N max;
 
+	/**
+	 * Creates a new range with the given min and max values.
+	 *
+	 * @param min
+	 * 		the min value
+	 * @param max
+	 * 		the max value
+	 * @param <N>
+	 * 		the generic type of the min and max values
+	 *
+	 * @return a new range
+	 *
+	 * @throws NullPointerException
+	 * 		if both min and max are null
+	 * @deprecated Please use {@link org.omnifaces.utils.data.Range#ofClosed(Comparable, Comparable)} or {@link MutableRange#ofClosed(Comparable,
+	 * Comparable)} instead
+	 */
 	@SuppressWarnings("unchecked")
-	public static <N extends Number> Range<N> of(N min, N max) {
+	public static <N extends Number & Comparable<N>> Range<N> of(N min, N max) {
 		if (min == null && max == null) {
 			throw new NullPointerException("min and max may not be null");
 		}
@@ -38,17 +54,35 @@ public abstract class Range<N extends Number> implements Serializable {
 		return of(type, min, max);
 	}
 
+	/**
+	 * Creates a new fully closed range for the given type and min and max values.
+	 *
+	 * @param type
+	 * 		the type of the min and max values
+	 * @param min
+	 * 		the min value
+	 * @param max
+	 * 		the max value
+	 * @param <N>
+	 * 		the type of the min and max values
+	 *
+	 * @return a new range instance with the given min and max
+	 *
+	 * @see MutableRange
+	 * @see org.omnifaces.utils.data.Range
+	 * @deprecated Use {@link org.omnifaces.utils.data.Range#ofClosed(Comparable, Comparable)} or {@link MutableRange#ofClosed(Comparable, Comparable)} instead.
+	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static <N extends Number> Range<N> of(Class<N> type, N min, N max) {
+	public static <N extends Number & Comparable<N>> Range<N> of(Class<N> type, N min, N max) {
 		Range range;
 
-		if (type == Long.class) {
+		if (type.equals(Long.class)) {
 			range = new LongRange();
 		}
-		else if (type == Integer.class) {
+		else if (type.equals(Integer.class)) {
 			range = new IntegerRange();
 		}
-		else if (type == BigDecimal.class) {
+		else if (type.equals(BigDecimal.class)) {
 			range = new BigDecimalRange();
 		}
 		else {
@@ -76,35 +110,10 @@ public abstract class Range<N extends Number> implements Serializable {
 		return array;
 	}
 
-	public boolean intersects(Range<?> other) {
-		checkNonNull(this);
-		checkNonNull(other);
 
-		return compare(getMin(), other.getMax()) <= 0 && compare(getMax(), other.getMin()) >= 0;
-	}
 
-	private static <N extends Number> int compare(N left, N right) {
-		return Objects.compare(left, right, NUMBER_COMPARATOR);
-	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	public boolean equals(Object object) {
-		return (object == this) || (object instanceof Range && equals((Range<N>) object));
-	}
-
-	public boolean equals(Range<N> other) {
-		return Objects.equals(getMin(), other.getMin()) && Objects.equals(getMax(), other.getMax());
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(getClass(), getMin(), getMax());
-	}
-
-	@Override
-	public String toString() {
-		return "[" + getMin() + ".." + getMax() + "]";
+	protected int compare(N left, N right) {
+		return Objects.compare(left, right, naturalOrder());
 	}
 
 	public N getMin() {
@@ -112,7 +121,7 @@ public abstract class Range<N extends Number> implements Serializable {
 	}
 
 	public void setMin(N min) {
-		if (min != null && compare(min, getMax()) > 0) {
+		if (min != null && max != null && compare(min, getMax()) > 0) {
 			throw new IllegalArgumentException("min cannot be greater than max");
 		}
 
@@ -124,13 +133,59 @@ public abstract class Range<N extends Number> implements Serializable {
 	}
 
 	public void setMax(N max) {
-		if (max != null && compare(getMin(), max) > 0) {
+		if (max != null && min != null && compare(getMin(), max) > 0) {
 			throw new IllegalArgumentException("max cannot be lesser than min");
 		}
 
 		this.max = max;
 	}
 
-	public abstract boolean contains(N number);
+	protected abstract Range<N> newInstance();
 
+	@Override
+	public boolean isMinInclusive() {
+		return true;
+	}
+
+	@Override
+	public boolean isMaxInclusive() {
+		return true;
+	}
+
+	public void setMinInclusive(boolean minInclusive) {
+		this.minInclusive = minInclusive;
+	}
+
+	public void setMaxInclusive(boolean maxInclusive) {
+		this.maxInclusive = maxInclusive;
+	}
+
+	@Override
+	public Range<N> withMinInclusive(boolean newMinInclusive) {
+		return newInstance(min, max, newMinInclusive, maxInclusive);
+	}
+
+	@Override
+	public Range<N> withMaxInclusive(boolean newMaxInclusive) {
+		return newInstance(min, max, minInclusive, newMaxInclusive);
+	}
+
+	public Range<N> withMin(N newMin) {
+		return newInstance(newMin, max, minInclusive, maxInclusive);
+	}
+
+	public Range<N> withMax(N newMax) {
+		return newInstance(min, newMax, minInclusive, maxInclusive);
+	}
+
+	private Range<N> newInstance(N min, N max, boolean minInclusive, boolean maxInclusive) {
+		Range<N> newRange = newInstance();
+
+		newRange.setMin(min);
+		newRange.setMax(max);
+		newRange.setMinInclusive(minInclusive);
+		newRange.setMaxInclusive(maxInclusive);
+
+		return newRange;
+	}
 }
