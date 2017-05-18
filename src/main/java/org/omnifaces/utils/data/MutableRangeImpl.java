@@ -45,7 +45,7 @@ class MutableRangeImpl<N> extends AbstractRange<N> implements MutableRange<N> {
 
 	@Override
 	public boolean isMinInclusive() {
-		return true;
+		return minInclusive;
 	}
 
 	@Override
@@ -67,12 +67,12 @@ class MutableRangeImpl<N> extends AbstractRange<N> implements MutableRange<N> {
 	public Range<N> withMinInclusive(boolean newMinInclusive) {
 		return new MutableRangeImpl<>(min, max, newMinInclusive, maxInclusive, comparator);
 	}
-	
+
 	@Override
 	public Range<N> withMaxInclusive(boolean newMaxInclusive) {
 		return new MutableRangeImpl<>(min, max, minInclusive, newMaxInclusive, comparator);
 	}
-	
+
 	@Override
 	protected int compare(N left, N right) {
 		return Objects.compare(left, right, comparator);
