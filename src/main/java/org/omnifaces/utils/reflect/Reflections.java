@@ -220,15 +220,35 @@ public final class Reflections {
 	 * @throws IllegalStateException If the method cannot be invoked.
 	 * @throws ClassCastException When <code>T</code> is of wrong type.
 	 */
-	@SuppressWarnings("unchecked")
 	public static <T> T invokeMethod(Object instance, String methodName, Object... parameters) {
 		try {
 			Method method = findMethod(instance, methodName, parameters).orElseThrow(NoSuchMethodException::new);
+			return invokeMethod(instance, method, parameters);
+		}
+		catch (Exception e) {
+			throw new IllegalStateException(format(ERROR_INVOKE_METHOD, methodName, instance.getClass(), Arrays.toString(parameters)), e);
+		}
+	}
+
+	/**
+	 * Invoke given method of the given instance with the given parameters and return the result.
+	 * @param <T> The expected return type.
+	 * @param instance The instance to invoke the given method on.
+	 * @param method The method to be invoked on the given instance.
+	 * @param parameters The method parameters, if any.
+	 * @return The result of the method invocation, if any.
+	 * @throws NullPointerException When one of the given parameters is null.
+	 * @throws IllegalStateException If the method cannot be invoked.
+	 * @throws ClassCastException When <code>T</code> is of wrong type.
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> T invokeMethod(Object instance, Method method, Object... parameters) {
+		try {
 			method.setAccessible(true);
 			return (T) method.invoke(instance, parameters);
 		}
 		catch (Exception e) {
-			throw new IllegalStateException(format(ERROR_INVOKE_METHOD, methodName, instance.getClass(), Arrays.toString(parameters)), e);
+			throw new IllegalStateException(format(ERROR_INVOKE_METHOD, method.getName(), instance.getClass(), Arrays.toString(parameters)), e);
 		}
 	}
 
