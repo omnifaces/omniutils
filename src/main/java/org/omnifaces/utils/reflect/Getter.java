@@ -57,7 +57,7 @@ public interface Getter<T> extends Function<T, Object>, Serializable {
 			return (Class<T>) Class.forName(className);
 		}
 		catch (Exception e) {
-			throw new UnsupportedOperationException(e);
+			throw new IllegalStateException(e);
 		}
 	}
 
@@ -66,7 +66,7 @@ public interface Getter<T> extends Function<T, Object>, Serializable {
 
     	return stream(getBaseType().getDeclaredMethods())
         	.filter(method -> Objects.equals(method.getName(), methodName))
-        	.findFirst().orElseThrow(UnsupportedOperationException::new);
+        	.findFirst().orElseThrow(IllegalStateException::new);
     }
 
     default String getPropertyName() {
@@ -77,12 +77,12 @@ public interface Getter<T> extends Function<T, Object>, Serializable {
 			beanInfo = Introspector.getBeanInfo(getBaseType());
 		}
 		catch (IntrospectionException e) {
-			throw new UnsupportedOperationException(e);
+			throw new IllegalStateException(e);
 		}
 
 		return stream(beanInfo.getPropertyDescriptors())
     		.filter(property -> Objects.equals(property.getReadMethod(), method))
-        	.findFirst().orElseThrow(UnsupportedOperationException::new)
+        	.findFirst().orElseThrow(IllegalStateException::new)
         	.getName();
     }
 
