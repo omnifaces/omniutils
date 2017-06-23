@@ -8,8 +8,11 @@ import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterator.SORTED;
 import static java.util.Spliterators.spliteratorUnknownSize;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.function.BiFunction;
@@ -117,4 +120,66 @@ public class Streams {
 			return Stream.empty();
 		};
 	}
+
+	/**
+	 * Returns a stream of given object. Supported types are:
+	 * <ul>
+	 * <li>{@link Iterable}
+	 * <li>{@link Map} (returns a stream of entryset)
+	 * <li><code>int[]</code>
+	 * <li><code>long[]</code>
+	 * <li><code>double[]</code>
+	 * <li><code>Object[]</code>
+	 * <li>{@link Stream}
+	 * </ul>
+	 * Anything else is returned as a single-element stream. Null is returned as an empty stream.
+	 *
+	 * @param <T> The expected stream type.
+	 * @param object Any object to get a stream for.
+	 * @return A stream of given object.
+	 * @throws ClassCastException When <code>T</code> is of wrong type.
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> Stream<T> stream(Object object) {
+		if (object instanceof Iterable<?>) {
+			return (Stream<T>) StreamSupport.stream(((Iterable<?>) object).spliterator(), false);
+		}
+		else if (object instanceof Map<?, ?>) {
+			return (Stream<T>) ((Map<?, ?>) object).entrySet().stream();
+		}
+		else if (object instanceof int[]) {
+			return (Stream<T>) Arrays.stream((int[]) object).boxed();
+		}
+		else if (object instanceof long[]) {
+			return (Stream<T>) Arrays.stream((long[]) object).boxed();
+		}
+		else if (object instanceof double[]) {
+			return (Stream<T>) Arrays.stream((double[]) object).boxed();
+		}
+		else if (object instanceof Object[]) {
+			return (Stream<T>) Arrays.stream((Object[]) object);
+		}
+		else if (object instanceof Stream) {
+			return (Stream<T>) object;
+		}
+		else if (object != null) {
+			return (Stream<T>) Stream.of(object);
+		}
+		else {
+			return Stream.empty();
+		}
+	}
+
+	public static <T> Stream<T> stream(Iterable<T> iterable) {
+		return StreamSupport.stream(iterable.spliterator(), false);
+	}
+
+	public static <K, V> Stream<Entry<K, V>> stream(Map<K, V> map) {
+		return map.entrySet().stream();
+	}
+
+	public static <T> Stream<T> stream(T[] array) {
+		return Arrays.stream(array);
+	}
+
 }
