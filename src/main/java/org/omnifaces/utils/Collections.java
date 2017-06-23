@@ -44,7 +44,7 @@ public final class Collections {
 			}
 		}
 
-		return Collections.unmodifiableSet(set);
+		return java.util.Collections.unmodifiableSet(set);
 	}
 
 	/**
@@ -95,10 +95,10 @@ public final class Collections {
 
 		return target;
 	}
-	
+
 	/**
 	 * Returns <tt>true</tt> if the collection is not null and contains the specified element.
-	 * 
+	 *
 	 * @param collection the collection to test for the specified element
 	 * @param object element to test for in the specified collection
 	 * @return <tt>true</tt> if the collection is not null and contains the specified element
