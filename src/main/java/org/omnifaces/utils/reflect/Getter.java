@@ -23,6 +23,13 @@ import java.util.function.Function;
  * criteria.put(YourEntity::isDeleted, false);
  * </pre>
  * <p>
+ * And then later on in "the backend":
+ * <pre>
+ * criteria.forEach((getter, value) -&gt; requiredCriteria.put(getter.getPropertyName(), value));
+ * </pre>
+ * <p>
+ * This allows a type safe way of defining property names.
+ * <p>
  * Inspired by <a href="http://benjiweber.co.uk/blog/2015/08/17/lambda-parameter-names-with-reflection">Lambda parameter names with reflection</a>.
  * NOTE: works only in Java 8u60 and newer.
  *
