@@ -120,6 +120,10 @@ public final class Lang {
 		return false;
 	}
 
+	public static boolean isNotBlank(String string) {
+		return string != null && !string.trim().isEmpty();
+	}
+
 	public static <T, E extends Exception> T requireNotEmpty(T value, Supplier<E> exceptionSupplier) throws E {
 		if (isEmpty(value)) {
 			throw exceptionSupplier.get();
