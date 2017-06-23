@@ -17,6 +17,7 @@ import static java.util.logging.Level.FINEST;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,6 +33,7 @@ public final class Reflections {
 	private static final String ERROR_INSTANTIATE = "Cannot instantiate class '%s'.";
 	private static final String ERROR_ACCESS_FIELD = "Cannot access field '%s' of class '%s'.";
 	private static final String ERROR_INVOKE_METHOD = "Cannot invoke method '%s' of class '%s' with arguments %s.";
+	private static final String ERROR_MAP_FIELD = "Cannot map field '%s' from %s to %s.";
 
 	private Reflections() {
 		// Hide constructor.
@@ -249,6 +251,31 @@ public final class Reflections {
 		}
 		catch (Exception e) {
 			throw new IllegalStateException(format(ERROR_INVOKE_METHOD, method.getName(), instance.getClass(), Arrays.toString(parameters)), e);
+		}
+	}
+
+	/**
+	 * Map given member from given object to given object.
+	 *
+	 * @param <T> The from/target object type.
+	 * @param member Member to be mapped.
+	 * @param from Source object.
+	 * @param to Target object.
+	 */
+	public static <T> void map(Member member, T from, T to) {
+		if (member instanceof Field) {
+			Field field = (Field) member;
+
+			try {
+				field.setAccessible(true);
+				field.set(to, field.get(from));
+			}
+			catch (Exception e) {
+				throw new IllegalStateException(format(ERROR_MAP_FIELD, field.getName(), from, to), e);
+			}
+		}
+		else {
+			throw new UnsupportedOperationException("Not implemented yet for " + member);
 		}
 	}
 
