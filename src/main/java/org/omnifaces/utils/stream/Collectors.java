@@ -4,9 +4,12 @@ import static java.util.Comparator.naturalOrder;
 import static java.util.function.Function.identity;
 
 import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collector;
@@ -19,6 +22,14 @@ public final class Collectors {
 
 	public static <T, K> Collector<T, ?, Map<K, T>> toMap(Function<? super T, ? extends K> keyMapper) {
 		return java.util.stream.Collectors.toMap(keyMapper, identity());
+	}
+
+	public static <T, K> Collector<T, ?, Map<K, T>> toLinkedMap(Function<? super T, ? extends K> keyMapper) {
+		return java.util.stream.Collectors.toMap(keyMapper, identity(), (l, r) -> l, LinkedHashMap::new);
+	}
+
+	public static <T> Collector<T, ?, Set<T>> toLinkedSet() {
+		return java.util.stream.Collectors.toCollection(LinkedHashSet::new);
 	}
 
 	public static <T> Collector<T, ?, Void> forEachBatch(Consumer<List<T>> batchConsumer, int batchSize) {
