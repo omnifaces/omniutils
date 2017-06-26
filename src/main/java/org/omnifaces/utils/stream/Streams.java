@@ -171,15 +171,15 @@ public class Streams {
 	}
 
 	public static <T> Stream<T> stream(Iterable<T> iterable) {
-		return StreamSupport.stream(iterable.spliterator(), false);
+		return iterable == null ? Stream.empty() : StreamSupport.stream(iterable.spliterator(), false);
 	}
 
 	public static <K, V> Stream<Entry<K, V>> stream(Map<K, V> map) {
-		return map.entrySet().stream();
+		return map == null ? Stream.empty() : map.entrySet().stream();
 	}
 
 	public static <T> Stream<T> stream(T[] array) {
-		return Arrays.stream(array);
+		return array == null ? Stream.empty() : Arrays.stream(array);
 	}
 
 }
