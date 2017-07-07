@@ -7,7 +7,7 @@
 
     <groupId>org.omnifaces</groupId>
     <artifactId>omniutils</artifactId>
-    <version>0.4-SNAPSHOT</version>
+    <version>0.4</version>
 
     <name>OmniUtils</name>
     <description>Java utility library</description>
