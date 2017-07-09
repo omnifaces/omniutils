@@ -81,7 +81,7 @@ public interface Getter<T> extends Function<T, Object>, Serializable {
 		}
 
 		return stream(beanInfo.getPropertyDescriptors())
-    		.filter(property -> Objects.equals(property.getReadMethod(), method))
+    		.filter(property -> Objects.equals(property.getReadMethod().getName(), method.getName()))
         	.findFirst().orElseThrow(IllegalStateException::new)
         	.getName();
     }
