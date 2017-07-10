@@ -2,6 +2,7 @@ package org.omnifaces.utils.collection;
 
 import static java.util.Collections.unmodifiableList;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -18,7 +19,9 @@ import java.util.ListIterator;
  * @param <E>
  *            the type of element the list should contain
  */
-public class PartialResultList<E> implements List<E> {
+public class PartialResultList<E> implements List<E>, Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	public static final int UNKNOWN_NUMBER_OF_RESULTS = -1;
 
