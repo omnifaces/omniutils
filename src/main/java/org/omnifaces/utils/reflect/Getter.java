@@ -54,7 +54,7 @@ public interface Getter<T> extends Function<T, Object>, Serializable {
 		String className = getSerializedLambda().getImplClass().replace("/", ".");
 
 		try {
-			return (Class<T>) Class.forName(className);
+			return (Class<T>) Class.forName(className, true, Thread.currentThread().getContextClassLoader());
 		}
 		catch (Exception e) {
 			throw new IllegalStateException(e);
