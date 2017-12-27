@@ -285,11 +285,11 @@ public final class Reflections {
 		}
 	}
 
-	public static <T> List<Class<?>> getActualTypeArguments(Class<? extends T> subclass, Class<T> superClass) {
+	public static <T> List<Class<?>> getActualTypeArguments(Class<? extends T> subclass, Class<T> superclass) {
 		Map<TypeVariable<?>, Type> typeMapping = new HashMap<>();
 		Type actualType = subclass.getGenericSuperclass();
 
-		while (!(actualType instanceof ParameterizedType) || !superClass.equals(((ParameterizedType) actualType).getRawType())) {
+		while (!(actualType instanceof ParameterizedType) || !superclass.equals(((ParameterizedType) actualType).getRawType())) {
 			if (actualType instanceof ParameterizedType) {
 				Class<?> rawType = (Class<?>) ((ParameterizedType) actualType).getRawType();
 				TypeVariable<?>[] typeParameters = rawType.getTypeParameters();
@@ -308,9 +308,7 @@ public final class Reflections {
 		List<Class<?>> actualTypeArguments = new ArrayList<>();
 
 		for (Type actualTypeArgument : ((ParameterizedType) actualType).getActualTypeArguments()) {
-			if (actualTypeArgument instanceof TypeVariable) {
-				actualTypeArguments.add((Class<?>) typeMapping.get(actualTypeArgument));
-			}
+			actualTypeArguments.add((Class<?>) (actualTypeArgument instanceof TypeVariable ? typeMapping.get(actualTypeArgument) : actualTypeArgument));
 		}
 
 		return unmodifiableList(actualTypeArguments);
