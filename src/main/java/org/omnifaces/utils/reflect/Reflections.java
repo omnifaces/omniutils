@@ -13,15 +13,21 @@
 package org.omnifaces.utils.reflect;
 
 import static java.lang.String.format;
+import static java.util.Collections.unmodifiableList;
 import static java.util.logging.Level.FINEST;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -277,6 +283,37 @@ public final class Reflections {
 		else {
 			throw new UnsupportedOperationException("Not implemented yet for " + member);
 		}
+	}
+
+	public static <T> List<Class<?>> getActualTypeArguments(Class<? extends T> subclass, Class<T> superClass) {
+		Map<TypeVariable<?>, Type> typeMapping = new HashMap<>();
+		Type actualType = subclass.getGenericSuperclass();
+
+		while (!(actualType instanceof ParameterizedType) || !superClass.equals(((ParameterizedType) actualType).getRawType())) {
+			if (actualType instanceof ParameterizedType) {
+				Class<?> rawType = (Class<?>) ((ParameterizedType) actualType).getRawType();
+				TypeVariable<?>[] typeParameters = rawType.getTypeParameters();
+
+				for (int i = 0; i < typeParameters.length; i++) {
+					Type typeArgument = ((ParameterizedType) actualType).getActualTypeArguments()[i];
+					typeMapping.put(typeParameters[i], typeArgument instanceof TypeVariable ? typeMapping.get(typeArgument) : typeArgument);
+				}
+
+				actualType = rawType;
+			}
+
+			actualType = ((Class<?>) actualType).getGenericSuperclass();
+		}
+
+		List<Class<?>> actualTypeArguments = new ArrayList<>();
+
+		for (Type actualTypeArgument : ((ParameterizedType) actualType).getActualTypeArguments()) {
+			if (actualTypeArgument instanceof TypeVariable) {
+				actualTypeArguments.add((Class<?>) typeMapping.get(actualTypeArgument));
+			}
+		}
+
+		return unmodifiableList(actualTypeArguments);
 	}
 
 }
