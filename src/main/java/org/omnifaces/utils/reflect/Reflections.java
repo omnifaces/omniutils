@@ -16,6 +16,7 @@ import static java.lang.String.format;
 import static java.util.Collections.unmodifiableList;
 import static java.util.logging.Level.FINEST;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
@@ -43,6 +44,29 @@ public final class Reflections {
 
 	private Reflections() {
 		// Hide constructor.
+	}
+
+	/**
+	 * Finds a field based on the annotations.
+	 * @param clazz The class object for which the annotated field is to be found.
+	 * @return annotations The annotations of the field.
+	 * @throws IllegalArgumentException When no annotations are specified.
+	 */
+	@SafeVarargs
+	public static Optional<Field> findAnnotatedField(Class<?> clazz, Class<? extends Annotation>... annotations) {
+		if (annotations.length == 0) {
+			throw new IllegalArgumentException("annotations");
+		}
+
+		for (Class<?> cls = clazz; cls != null; cls = cls.getSuperclass()) {
+			for (Field field : cls.getDeclaredFields()) {
+				if (Arrays.stream(annotations).allMatch(field::isAnnotationPresent)) {
+					return Optional.of(field);
+				}
+			}
+		}
+
+		return Optional.empty();
 	}
 
 	/**
