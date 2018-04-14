@@ -47,6 +47,23 @@ public final class Reflections {
 	}
 
 	/**
+	 * Finds a field based on the field name.
+	 * @param base the object in which the field is to be found
+	 * @return fieldName The name the field to be found.
+	 */
+	public static Optional<Field> findField(Object base, String fieldName) {
+		for (Class<?> cls = base.getClass(); cls != null; cls = cls.getSuperclass()) {
+			for (Field field : cls.getDeclaredFields()) {
+				if (field.getName().equals(fieldName)) {
+					return Optional.of(field);
+				}
+			}
+		}
+
+		return Optional.empty();
+	}
+
+	/**
 	 * Finds a field based on the annotations.
 	 * @param clazz The class object for which the annotated field is to be found.
 	 * @return annotations The annotations of the field.
@@ -229,7 +246,7 @@ public final class Reflections {
 	@SuppressWarnings("unchecked")
 	public static <T> T accessField(Object instance, String fieldName) {
 		try {
-			Field field = instance.getClass().getDeclaredField(fieldName);
+			Field field = findField(instance, fieldName).orElseThrow(NoSuchFieldException::new);
 			field.setAccessible(true);
 			return (T) field.get(instance);
 		}
