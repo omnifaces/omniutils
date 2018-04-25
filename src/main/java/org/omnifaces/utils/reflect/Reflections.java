@@ -21,6 +21,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
@@ -39,6 +40,7 @@ public final class Reflections {
 	private static final String ERROR_LOAD_CLASS = "Cannot load class '%s'.";
 	private static final String ERROR_INSTANTIATE = "Cannot instantiate class '%s'.";
 	private static final String ERROR_ACCESS_FIELD = "Cannot access field '%s' of class '%s'.";
+	private static final String ERROR_MODIFY_FIELD = "Cannot modify field '%s' of class '%s' with value %s.";
 	private static final String ERROR_INVOKE_METHOD = "Cannot invoke method '%s' of class '%s' with arguments %s.";
 	private static final String ERROR_MAP_FIELD = "Cannot map field '%s' from %s to %s.";
 
@@ -49,10 +51,21 @@ public final class Reflections {
 	/**
 	 * Finds a field based on the field name.
 	 * @param base the object in which the field is to be found
-	 * @return fieldName The name the field to be found.
+	 * @param fieldName The name the field to be found.
+	 * @return The found field, if any.
 	 */
 	public static Optional<Field> findField(Object base, String fieldName) {
-		for (Class<?> cls = base.getClass(); cls != null; cls = cls.getSuperclass()) {
+		return findField(base != null ? base.getClass() : null, fieldName);
+	}
+
+	/**
+	 * Finds a field based on the field name.
+	 * @param clazz The class object for which the field is to be found.
+	 * @param fieldName The name the field to be found.
+	 * @return The found field, if any.
+	 */
+	public static Optional<Field> findField(Class<?> clazz, String fieldName) {
+		for (Class<?> cls = clazz; cls != null; cls = cls.getSuperclass()) {
 			for (Field field : cls.getDeclaredFields()) {
 				if (field.getName().equals(fieldName)) {
 					return Optional.of(field);
@@ -64,26 +77,61 @@ public final class Reflections {
 	}
 
 	/**
-	 * Finds a field based on the annotations.
-	 * @param clazz The class object for which the annotated field is to be found.
-	 * @return annotations The annotations of the field.
+	 * Finds all fields having all of given annotations.
+	 * @param clazz The class object for which the annotated fields is to be found.
+	 * @param annotations The annotations of the field.
+	 * @return All fields having all of given annotations.
 	 * @throws IllegalArgumentException When no annotations are specified.
 	 */
 	@SafeVarargs
-	public static Optional<Field> findAnnotatedField(Class<?> clazz, Class<? extends Annotation>... annotations) {
+	public static List<Field> listAnnotatedFields(Class<?> clazz, Class<? extends Annotation>... annotations) {
 		if (annotations.length == 0) {
 			throw new IllegalArgumentException("annotations");
 		}
 
+		List<Field> annotatedFields = new ArrayList<>();
+
 		for (Class<?> cls = clazz; cls != null; cls = cls.getSuperclass()) {
 			for (Field field : cls.getDeclaredFields()) {
 				if (Arrays.stream(annotations).allMatch(field::isAnnotationPresent)) {
-					return Optional.of(field);
+					annotatedFields.add(field);
 				}
 			}
 		}
 
-		return Optional.empty();
+		return annotatedFields;
+	}
+
+	/**
+	 * Finds all enum fields having all of given annotations.
+	 * @param clazz The class object for which the annotated enum fields is to be found.
+	 * @param annotations The annotations of the field.
+	 * @return All enum fields having all of given annotations.
+	 * @throws IllegalArgumentException When no annotations are specified.
+	 */
+	@SafeVarargs
+	@SuppressWarnings("unchecked")
+	public static List<Class<? extends Enum<?>>> listAnnotatedEnumFields(Class<?> clazz, Class<? extends Annotation>... annotations) {
+		if (annotations.length == 0) {
+			throw new IllegalArgumentException("annotations");
+		}
+
+		List<Class<? extends Enum<?>>> annotatedEnumFields = new ArrayList<>();
+
+		for (Field field : listAnnotatedFields(clazz, annotations)) {
+			if (field.getType().isEnum()) {
+				annotatedEnumFields.add((Class<? extends Enum<?>>) field.getType());
+			}
+			else if (field.getGenericType() instanceof ParameterizedType) {
+				for (Type typeArgument : ((ParameterizedType) field.getGenericType()).getActualTypeArguments()) {
+					if (typeArgument instanceof Class && ((Class<?>) typeArgument).isEnum()) {
+						annotatedEnumFields.add((Class<? extends Enum<?>>) typeArgument);
+					}
+				}
+			}
+		}
+
+		return annotatedEnumFields;
 	}
 
 	/**
@@ -97,7 +145,7 @@ public final class Reflections {
 	 * @param base the object in which the method is to be found
 	 * @param methodName name of the method to be found
 	 * @param params the method parameters
-	 * @return a method if one is found, null otherwise
+	 * @return The found method, if any.
 	 */
 	public static Optional<Method> findMethod(Object base, String methodName, Object... params) {
 
@@ -175,7 +223,7 @@ public final class Reflections {
 	 * instead of throwing illegal state exception.
 	 * @param <T> The expected class type.
 	 * @param className Fully qualified class name of the class for which a class object needs to be created.
-	 * @return The class object associated with the given class name.
+	 * @return The found class object associated with the given class name, if any.
 	 * @throws ClassCastException When <code>T</code> is of wrong type.
 	 */
 	public static <T> Optional<Class<T>> findClass(String className) {
@@ -190,9 +238,10 @@ public final class Reflections {
 
 	/**
 	 * Finds a constructor based on the given parameter types and returns <code>null</code> is none is found.
+	 * @param <T> The generic object type.
 	 * @param clazz The class object for which the constructor is to be found.
 	 * @param parameterTypes The desired method parameter types.
-	 * @return A constructor if one is found, null otherwise.
+	 * @return The found constructor, if any.
 	 */
 	public static <T> Optional<Constructor<T>> findConstructor(Class<T> clazz, Class<?>... parameterTypes) {
 		try {
@@ -243,15 +292,79 @@ public final class Reflections {
 	 * @throws ClassCastException When <code>T</code> is of wrong type.
 	 * @throws IllegalStateException If the field cannot be accessed.
 	 */
-	@SuppressWarnings("unchecked")
 	public static <T> T accessField(Object instance, String fieldName) {
 		try {
 			Field field = findField(instance, fieldName).orElseThrow(NoSuchFieldException::new);
+			return accessField(instance, field);
+		}
+		catch (Exception e) {
+			throw new IllegalStateException(format(ERROR_ACCESS_FIELD, fieldName, instance != null ? instance.getClass() : null), e);
+		}
+	}
+
+	/**
+	 * Returns the value of the field of the given instance on the given field name.
+	 * @param <T> The expected return type.
+	 * @param instance The instance to access the given field on.
+	 * @param field The field to be accessed on the given instance.
+	 * @return The value of the field of the given instance on the given field name.
+	 * @throws ClassCastException When <code>T</code> is of wrong type.
+	 * @throws IllegalStateException If the field cannot be accessed.
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> T accessField(Object instance, Field field) {
+		try {
 			field.setAccessible(true);
 			return (T) field.get(instance);
 		}
 		catch (Exception e) {
-			throw new IllegalStateException(format(ERROR_ACCESS_FIELD, fieldName, instance.getClass()), e);
+			throw new IllegalStateException(format(ERROR_ACCESS_FIELD, field != null ? field.getName() : null, instance != null ? instance.getClass() : null), e);
+		}
+	}
+
+	/**
+	 * Modifies the value of the field of the given instance on the given field name with the given value.
+	 * @param <T> The field type.
+	 * @param instance The instance to access the given field on.
+	 * @param fieldName The name of the field to be accessed on the given instance.
+	 * @param value The new value of the field of the given instance on the given field name.
+	 * @return The old value of the field of the given instance on the given field name.
+	 * @throws ClassCastException When <code>T</code> is of wrong type.
+	 * @throws IllegalStateException If the field cannot be modified.
+	 */
+	public static <T> T modifyField(Object instance, String fieldName, T value) {
+		try {
+			Field field = findField(instance, fieldName).orElseThrow(NoSuchFieldException::new);
+			return modifyField(instance, field, value);
+		}
+		catch (Exception e) {
+			throw new IllegalStateException(format(ERROR_MODIFY_FIELD, fieldName, instance != null ? instance.getClass() : null), e);
+		}
+	}
+
+	/**
+	 * Modifies the value of the given field of the given instance with the given value.
+	 * @param <T> The field type.
+	 * @param instance The instance to access the given field on.
+	 * @param field The field to be accessed on the given instance.
+	 * @param value The new value of the given field of the given instance.
+	 * @return The old value of the given field of the given instance.
+	 * @throws ClassCastException When <code>T</code> is of wrong type.
+	 * @throws IllegalStateException If the field cannot be modified.
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> T modifyField(Object instance, Field field, T value) {
+		try {
+			field.setAccessible(true);
+			Field modifiers = Field.class.getDeclaredField("modifiers");
+			modifiers.setAccessible(true);
+			modifiers.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+			Object oldValue = field.get(instance);
+			field.set(instance, value);
+			return (T) oldValue;
+		}
+		catch (Exception e) {
+			throw new IllegalStateException(format(ERROR_MODIFY_FIELD, field != null ? field.getName() : null, instance != null ? instance.getClass() : null, value), e);
 		}
 	}
 
@@ -275,7 +388,7 @@ public final class Reflections {
 			return invokeMethod(instance, method, parameters);
 		}
 		catch (Exception e) {
-			throw new IllegalStateException(format(ERROR_INVOKE_METHOD, methodName, instance.getClass(), Arrays.toString(parameters)), e);
+			throw new IllegalStateException(format(ERROR_INVOKE_METHOD, methodName, instance != null ? instance.getClass() : null, Arrays.toString(parameters)), e);
 		}
 	}
 
@@ -297,7 +410,7 @@ public final class Reflections {
 			return (T) method.invoke(instance, parameters);
 		}
 		catch (Exception e) {
-			throw new IllegalStateException(format(ERROR_INVOKE_METHOD, method.getName(), instance.getClass(), Arrays.toString(parameters)), e);
+			throw new IllegalStateException(format(ERROR_INVOKE_METHOD, method != null ? method.getName() : null, instance != null ? instance.getClass() : null, Arrays.toString(parameters)), e);
 		}
 	}
 
@@ -326,6 +439,14 @@ public final class Reflections {
 		}
 	}
 
+	/**
+	 * Returns the actual type arguments of the given subclass against which are declared on the given superclass.
+	 * The returned list is ordered.
+	 * @param <T> The generic superclass type.
+	 * @param subclass The subclass to get the actual type arguments from.
+	 * @param superclass The superclass where the generic type arguments are declared.
+	 * @return The actual type arguments of the given subclass against which are declared on the given superclass.
+	 */
 	public static <T> List<Class<?>> getActualTypeArguments(Class<? extends T> subclass, Class<T> superclass) {
 		Map<TypeVariable<?>, Type> typeMapping = new HashMap<>();
 		Type actualType = subclass.getGenericSuperclass();

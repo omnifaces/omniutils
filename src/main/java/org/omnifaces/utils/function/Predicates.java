@@ -34,6 +34,15 @@ public final class Predicates {
 		return t -> false;
 	}
 
+	public static <T> Predicate<T> not() {
+		return new Predicate<T>() {
+			@Override
+			public boolean test(T t) {
+				return false;
+			}
+		};
+	}
+
 	public static <T> Predicate<T> isEmpty() {
 		return Lang::isEmpty;
 	}
@@ -108,4 +117,9 @@ public final class Predicates {
 	public static <T, R> Predicate<T> mapped(Function<? super T, R> function, Predicate<? super R> predicate) {
 		return t -> predicate.test(function.apply(t));
 	}
+
+	public static <T> Predicate<T> not(Predicate<T> predicate) {
+		return t -> !predicate.test(t);
+	}
+
 }
