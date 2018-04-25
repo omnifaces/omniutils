@@ -77,7 +77,7 @@ public final class Images {
 		return image.getSubimage(x, y, desiredWidth, desiredHeight);
 	}
 
-	/**
+	/*
 	 * Examples of aspect ratios:
 	 * 1:1 = 1.0 (will delegate to cropToSquareImage())
 	 * 4:3 = 1.33333
