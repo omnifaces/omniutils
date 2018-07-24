@@ -20,6 +20,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 import static org.omnifaces.utils.Lang.setIfNotEmpty;
 import static org.omnifaces.utils.Lang.toTitleCase;
+import static org.omnifaces.utils.Lang.toUrlSafe;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -48,6 +49,16 @@ public class LangTest {
 		assertEquals("Lorem Ipsum Dolor Sit Amet", toTitleCase("LOREm IPSUm DOLOr SIt AMEt"));
 		assertEquals("Lorem Ipsum Dolor Sit Amet", toTitleCase("LoReM IpSuM DoLoR SiT AmEt"));
 		assertEquals("Lorem Ipsum Dolor Sit Amet", toTitleCase("Lorem Ipsum Dolor Sit Amet"));
+	}
+
+	@Test
+	public void urlSafeTest() {
+		assertNull(toUrlSafe(null));
+		assertEquals("lorem-ipsum-dolor-sit-amet", toUrlSafe("lorem ipsum dolor sit amet"));
+		assertEquals("LOREM-IPSUM-DOLOR-SIT-AMET", toUrlSafe("LOREM IPSUM DOLOR SIT AMET"));
+		assertEquals("lorem-ipsum-dOlor-sIt-amEt", toUrlSafe("lórém ípsúm dÓlor sÍt ámÉt"));
+		assertEquals("lorem-ipsum-dolor-sit-amet", toUrlSafe("lorem--ipsum--dolor--sit--amet"));
+		assertEquals("lorem-ipsum-dolor-sit-amet", toUrlSafe("?lorem&ipsum%dolor_sit amet-"));
 	}
 
 }

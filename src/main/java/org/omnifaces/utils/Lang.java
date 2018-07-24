@@ -18,6 +18,8 @@ import static java.lang.Character.toUpperCase;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.text.Normalizer;
+import java.text.Normalizer.Form;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
@@ -271,7 +273,21 @@ public final class Lang {
 		}, (sb1, sb2) -> {}).toString();
 	}
 
+	/**
+	 * Converts given string to URL safe format, also called a "slug".
+	 * @param string String to be converted to URL safe format.
+	 * @return The given string converted to URL safe format.
+	 */
+	public static String toUrlSafe(String string) {
+		if (string == null) {
+			return null;
+		}
 
+		return Normalizer.normalize(string.trim(), Form.NFD)
+			.replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
+			.replaceAll("[^\\p{Alnum}]+", "-")
+			.replaceAll("(^-|-$)", "");
+	}
 
 	/**
 	 * Escape given string as valid {@link Properties} entry value.
