@@ -259,6 +259,19 @@ public final class Lang {
 	}
 
 	/**
+	 * Converts the first character of given string to upper case.
+	 * @param string String to be capitalized.
+	 * @return The given string capitalized.
+	 */
+	public static String capitalize(String string) {
+		if (string == null || string.isEmpty()) {
+			return string;
+		}
+
+		return toUpperCase(string.charAt(0)) + string.substring(1);
+	}
+
+	/**
 	 * Converts given string to title case.
 	 * @param string String to be converted to title case.
 	 * @return The given string converted to title case.
