@@ -15,6 +15,7 @@ package org.omnifaces.utils.reflect;
 import static java.lang.String.format;
 import static java.util.Collections.unmodifiableList;
 import static java.util.logging.Level.FINEST;
+import static org.omnifaces.utils.Lang.capitalize;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -378,7 +379,6 @@ public final class Reflections {
 	 * @param methodName The name of the method to be invoked on the given instance.
 	 * @param parameters The method parameters, if any.
 	 * @return The result of the method invocation, if any.
-	 * @throws NullPointerException When one of the given parameters is null.
 	 * @throws IllegalStateException If the method cannot be invoked.
 	 * @throws ClassCastException When <code>T</code> is of wrong type.
 	 */
@@ -399,7 +399,6 @@ public final class Reflections {
 	 * @param method The method to be invoked on the given instance.
 	 * @param parameters The method parameters, if any.
 	 * @return The result of the method invocation, if any.
-	 * @throws NullPointerException When one of the given parameters is null.
 	 * @throws IllegalStateException If the method cannot be invoked.
 	 * @throws ClassCastException When <code>T</code> is of wrong type.
 	 */
@@ -412,6 +411,39 @@ public final class Reflections {
 		catch (Exception e) {
 			throw new IllegalStateException(format(ERROR_INVOKE_METHOD, method != null ? method.getName() : null, instance != null ? instance.getClass() : null, Arrays.toString(parameters)), e);
 		}
+	}
+
+	/**
+	 * Invoke getter method of the given instance on the given property name and return the result.
+	 * @param <T> The expected return type.
+	 * @param instance The instance to invoke the given getter method on.
+	 * @param propertyName The property name of the getter method to be invoked on the given instance.
+	 * @return The result of the method invocation, if any.
+	 * @throws IllegalStateException If the getter method cannot be invoked.
+	 * @throws ClassCastException When <code>T</code> is of wrong type.
+	 */
+	public static <T> T invokeGetter(Object instance, String propertyName) {
+		String capitalizedPropertyName = capitalize(propertyName);
+		Optional<Method> booleanGetter = findMethod(instance, "is" + capitalizedPropertyName);
+
+		if (booleanGetter.isPresent()) {
+			return invokeMethod(instance, booleanGetter.get());
+		}
+		else {
+			return invokeMethod(instance, "get" + capitalizedPropertyName);
+		}
+	}
+
+	/**
+	 * Invoke setter method of the given instance on the given property name with the given property value and return the result.
+	 * @param instance The instance to invoke the given setter method on.
+	 * @param propertyName The property name of the setter method to be invoked on the given instance.
+	 * @param propertyValue The property value to be set.
+	 * @throws IllegalStateException If the setter method cannot be invoked.
+	 */
+	public static void invokeSetter(Object instance, String propertyName, Object propertyValue) {
+		String capitalizedPropertyName = capitalize(propertyName);
+		invokeMethod(instance, "set" + capitalizedPropertyName, propertyValue);
 	}
 
 	/**
