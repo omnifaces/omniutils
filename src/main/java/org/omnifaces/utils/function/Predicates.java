@@ -34,15 +34,6 @@ public final class Predicates {
 		return t -> false;
 	}
 
-	public static <T> Predicate<T> not() {
-		return new Predicate<T>() {
-			@Override
-			public boolean test(T t) {
-				return false;
-			}
-		};
-	}
-
 	public static <T> Predicate<T> isEmpty() {
 		return Lang::isEmpty;
 	}
