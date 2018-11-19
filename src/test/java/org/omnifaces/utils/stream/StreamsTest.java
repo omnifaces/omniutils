@@ -46,10 +46,6 @@ public class StreamsTest {
 			return value;
 		}
 
-		public NonComparable increment() {
-			return new NonComparable(value + 1);
-		}
-
 		public NonComparable decrement() {
 			return new NonComparable(value - 1);
 		}

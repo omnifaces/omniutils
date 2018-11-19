@@ -19,7 +19,9 @@ import java.util.Objects;
 
 class MutableRangeImpl<N> extends AbstractRange<N> implements MutableRange<N> {
 
-	private N min;
+    private static final long serialVersionUID = 1L;
+    
+    private N min;
 	private N max;
 
 	private boolean minInclusive;

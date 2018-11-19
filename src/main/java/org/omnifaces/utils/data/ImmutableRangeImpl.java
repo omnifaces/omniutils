@@ -19,7 +19,9 @@ import java.util.Objects;
 
 class ImmutableRangeImpl<N> extends AbstractRange<N> {
 
-	private final N min;
+    private static final long serialVersionUID = -1899797137173600162L;
+    
+    private final N min;
 	private final N max;
 	private final boolean minInclusive;
 	private final boolean maxInclusive;
