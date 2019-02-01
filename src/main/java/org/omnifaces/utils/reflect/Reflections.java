@@ -415,6 +415,7 @@ public final class Reflections {
 
 	/**
 	 * Invoke getter method of the given instance on the given property name and return the result.
+	 * If the property name is dot-separated, then it will be invoked recursively.
 	 * @param <T> The expected return type.
 	 * @param instance The instance to invoke the given getter method on.
 	 * @param propertyName The property name of the getter method to be invoked on the given instance.
@@ -422,28 +423,47 @@ public final class Reflections {
 	 * @throws IllegalStateException If the getter method cannot be invoked.
 	 * @throws ClassCastException When <code>T</code> is of wrong type.
 	 */
+	@SuppressWarnings("unchecked")
 	public static <T> T invokeGetter(Object instance, String propertyName) {
-		String capitalizedPropertyName = capitalize(propertyName);
-		Optional<Method> booleanGetter = findMethod(instance, "is" + capitalizedPropertyName);
+		Object result = instance;
 
-		if (booleanGetter.isPresent()) {
-			return invokeMethod(instance, booleanGetter.get());
+		for (String propertyNameItem : propertyName.split("\\."))
+		{
+			String capitalizedPropertyName = capitalize(propertyNameItem);
+			Optional<Method> booleanGetter = findMethod(result, "is" + capitalizedPropertyName);
+
+			if (booleanGetter.isPresent()) {
+				result = invokeMethod(result, booleanGetter.get());
+			}
+			else {
+				result = invokeMethod(result, "get" + capitalizedPropertyName);
+			}
 		}
-		else {
-			return invokeMethod(instance, "get" + capitalizedPropertyName);
-		}
+
+		return (T) result;
 	}
 
 	/**
 	 * Invoke setter method of the given instance on the given property name with the given property value and return the result.
+	 * If the property name is dot-separated, then it will be invoked recursively.
 	 * @param instance The instance to invoke the given setter method on.
 	 * @param propertyName The property name of the setter method to be invoked on the given instance.
 	 * @param propertyValue The property value to be set.
 	 * @throws IllegalStateException If the setter method cannot be invoked.
 	 */
 	public static void invokeSetter(Object instance, String propertyName, Object propertyValue) {
-		String capitalizedPropertyName = capitalize(propertyName);
-		invokeMethod(instance, "set" + capitalizedPropertyName, propertyValue);
+		Object target = instance;
+		String setterPropertyName = propertyName;
+		int recurse = propertyName.lastIndexOf('.');
+
+		if (recurse > 0) {
+			String getterPropertyName = propertyName.substring(0, recurse);
+			target = invokeGetter(target, getterPropertyName);
+			setterPropertyName = propertyName.substring(recurse + 1);
+		}
+
+		String capitalizedPropertyName = capitalize(setterPropertyName);
+		invokeMethod(target, "set" + capitalizedPropertyName, propertyValue);
 	}
 
 	/**
