@@ -1,7 +1,7 @@
-[![Maven](https://img.shields.io/maven-metadata/v/http/central.maven.org/maven2/org/omnifaces/omniutils/maven-metadata.xml.svg)](http://central.maven.org/maven2/org/omnifaces/omniutils/)
-[![Javadoc](http://javadoc.io/badge/org.omnifaces/omniutils.svg)](http://javadoc.io/doc/org.omnifaces/omniutils) 
+[![Maven](https://img.shields.io/maven-metadata/v/https/repo.maven.apache.org/maven2/org/omnifaces/omniutils/maven-metadata.xml.svg)](https://repo.maven.apache.org/maven2/org/omnifaces/omniutils/)
+[![Javadoc](https://javadoc.io/badge/org.omnifaces/omniutils.svg)](https://javadoc.io/doc/org.omnifaces/omniutils) 
 [![Travis](https://travis-ci.org/omnifaces/omniutils.svg?branch=develop)](https://travis-ci.org/omnifaces/omniutils)
-[![License](http://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
+[![License](https://img.shields.io/:license-apache-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 OmniFaces Utils
 =================
@@ -18,7 +18,7 @@ Maven users can add OmniFaces by adding the following Maven coordinates to the p
 <dependency>
     <groupId>org.omnifaces</groupId>
     <artifactId>omniutils</artifactId>
-    <version>0.10</version>
+    <version>0.11</version>
 </dependency>
 ```
 
