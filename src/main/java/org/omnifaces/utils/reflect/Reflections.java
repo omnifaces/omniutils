@@ -22,7 +22,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
@@ -154,7 +153,7 @@ public final class Reflections {
 
 		for (Class<?> cls = base.getClass(); cls != null; cls = cls.getSuperclass()) {
 			for (Method method : cls.getDeclaredMethods()) {
-				if (method.getName().equals(methodName) && method.getParameterTypes().length == params.length) {
+				if (method.getName().equals(methodName) && method.getParameterTypes().length == params.length && isNotOverridden(methods, method)) {
 					methods.add(method);
 				}
 			}
@@ -166,6 +165,16 @@ public final class Reflections {
 		else {
 			return Optional.ofNullable(closestMatchingMethod(methods, params)); // Overloaded methods were found. Try to find closest match.
 		}
+	}
+
+	private static boolean isNotOverridden(List<Method> methodsWithSameName, Method method) {
+		for (Method methodWithSameName : methodsWithSameName) {
+			if (Arrays.equals(methodWithSameName.getParameterTypes(), method.getParameterTypes())) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	private static Method closestMatchingMethod(List<Method> methods, Object... params) {
@@ -357,9 +366,6 @@ public final class Reflections {
 	public static <T> T modifyField(Object instance, Field field, T value) {
 		try {
 			field.setAccessible(true);
-			Field modifiers = Field.class.getDeclaredField("modifiers");
-			modifiers.setAccessible(true);
-			modifiers.setInt(field, field.getModifiers() & ~Modifier.FINAL);
 			Object oldValue = field.get(instance);
 			field.set(instance, value);
 			return (T) oldValue;
