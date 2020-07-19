@@ -1,106 +1,104 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <prerequisites>
-        <maven>3.0.0</maven>
-    </prerequisites>
+<project
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+>
+	<modelVersion>4.0.0</modelVersion>
+	<prerequisites>
+		<maven>3.0.0</maven>
+	</prerequisites>
 
-    <groupId>org.omnifaces</groupId>
-    <artifactId>omniutils</artifactId>
-    <version>0.12-SNAPSHOT</version>
+	<groupId>org.omnifaces</groupId>
+	<artifactId>omniutils</artifactId>
+	<version>0.12-SNAPSHOT</version>
+	<packaging>jar</packaging>
 
-    <name>OmniUtils</name>
-    <description>Java utility library</description>
+	<name>OmniUtils</name>
+	<description>Java utility library</description>
+	<url>https://github.com/omnifaces/omniutils</url>
+	<organization>
+		<name>OmniFaces</name>
+		<url>https://omnifaces.org</url>
+	</organization>
+	<inceptionYear>2015</inceptionYear>
 
-    <url>https://github.com/omnifaces/omniutils</url>
-    <organization>
-        <name>OmniFaces</name>
-        <url>https://omnifaces.org</url>
-    </organization>
-    <inceptionYear>2015</inceptionYear>
+	<developers>
+		<developer>
+			<id>balusc</id>
+			<name>Bauke Scholtz</name>
+			<email>balusc@gmail.com</email>
+		</developer>
+		<developer>
+			<id>arjan.tijms</id>
+			<name>Arjan Tijms</name>
+			<email>arjan.tijms@gmail.com</email>
+		</developer>
+		<developer>
+			<id>jan.beernink</id>
+			<name>Jan Beernink</name>
+			<email>jan.beernink@gmail.com</email>
+		</developer>
+	</developers>
 
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
 
-    <licenses>
-        <license>
-            <name>The Apache Software License, Version 2.0</name>
-            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
+	<scm>
+		<url>https://github.com/omnifaces/omniutils</url>
+		<connection>scm:git:git://github.com/omnifaces/omniutils.git</connection>
+		<developerConnection>scm:git:git@github.com:omnifaces/omniutils.git</developerConnection>
+	</scm>
 
-    <scm>
-        <url>https://github.com/omnifaces/omniutils</url>
-        <connection>scm:git:git://github.com/omnifaces/omniutils.git</connection>
-        <developerConnection>scm:git:git@github.com:omnifaces/omniutils.git</developerConnection>
-    </scm>
+	<distributionManagement>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <javase.version>1.8</javase.version>
-    </properties>
+	<properties>
 
-    <developers>
-        <developer>
-            <id>balusc</id>
-            <name>Bauke Scholtz</name>
-            <email>balusc@gmail.com</email>
-        </developer>
+		<!-- Java version. -->
+		<javase.version>1.8</javase.version>
 
-        <developer>
-            <id>arjan.tijms</id>
-            <name>Arjan Tijms</name>
-            <email>arjan.tijms@gmail.com</email>
-        </developer>
+		<!-- Essential Maven defaults. -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<maven.compiler.source>${javase.version}</maven.compiler.source>
+		<maven.compiler.target>${javase.version}</maven.compiler.target>
+	</properties>
 
-        <developer>
-            <id>jan.beernink</id>
-            <name>Jan Beernink</name>
-            <email>jan.beernink@gmail.com</email>
-        </developer>
-    </developers>
+	<dependencies>
 
-    <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.11</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.hamcrest</groupId>
-                    <artifactId>hamcrest-core</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+		<!-- Test dependencies.	-->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.13</version>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.hamcrest</groupId>
+					<artifactId>hamcrest-core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-all</artifactId>
+			<version>1.3</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-all</artifactId>
-            <version>1.3</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-
-    <build>
-        <plugins>
-
-            <!-- Set the Java compiler versions -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.2</version>
-                <configuration>
-                    <source>${javase.version}</source>
-                    <target>${javase.version}</target>
-                </configuration>
-            </plugin>
+	<build>
+		<plugins>
 
 			<!-- Add missing license headers to source files. -->
 			<plugin>
@@ -126,88 +124,85 @@
 				</executions>
 			</plugin>
 
-            <!-- Configure the jar with the binaries -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.5</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-                        </manifest>
-                        <manifestEntries>
-                            <URL>${project.url}</URL>
-                            <Extension-Name>${project.artifactId}</Extension-Name>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
-            </plugin>
+			<!-- Configure the jar with the binaries. -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.2.0</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+						</manifest>
+						<manifestEntries>
+							<URL>${project.url}</URL>
+							<Extension-Name>${project.artifactId}</Extension-Name>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
 
-            <!-- Configure the jar with the sources (or rather, convince Maven that we want sources at all) -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>2.4</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+			<!-- Configure the jar with the sources. -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>3.2.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 
-            <!-- Configure the jar with the javadoc (or rather, convince Maven that we want javadoc at all) -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.1</version>
-                <configuration>
-                    <javadocVersion>1.8</javadocVersion>
-                    <notimestamp>true</notimestamp>
-                    <splitindex>true</splitindex>
-                    <doctitle>OmniUtils API documentation</doctitle>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+			<!-- Configure the jar with the javadoc. -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.2.0</version>
+				<configuration>
+					<javadocVersion>${javase.version}</javadocVersion>
+					<notimestamp>true</notimestamp>
+					<splitindex>true</splitindex>
+					<doctitle>OmniUtils API documentation</doctitle>
+				</configuration>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 
-            <plugin>
-                <groupId>external.atlassian.jgitflow</groupId>
-                <artifactId>jgitflow-maven-plugin</artifactId>
-                <version>1.0-m5.1</version>
-                <configuration>
-                    <noDeploy>true</noDeploy>
-                    <enableFeatureVersions>true</enableFeatureVersions>
-                </configuration>
-            </plugin>
+			<!-- Configure JGitFlow. -->
+			<plugin>
+				<groupId>external.atlassian.jgitflow</groupId>
+				<artifactId>jgitflow-maven-plugin</artifactId>
+				<version>1.0-m5.1</version>
+				<configuration>
+					<noDeploy>true</noDeploy>
+					<enableFeatureVersions>true</enableFeatureVersions>
+				</configuration>
+			</plugin>
 
-            <!-- Deploying is done via sonatype's Nexus
-
-                 Snapshot deploy: mvn clean deploy
-                 Release deploy: mvn clean deploy -P release
-            -->
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.5</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                </configuration>
-            </plugin>
-        </plugins>
+			<!-- Configure snapshot deployment to Sonatype. -->
+			<plugin>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<version>1.6.8</version>
+				<extensions>true</extensions>
+				<configuration>
+					<serverId>ossrh</serverId>
+					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+					<autoReleaseAfterClose>true</autoReleaseAfterClose>
+				</configuration>
+			</plugin>
+		</plugins>
 
 		<pluginManagement>
 			<plugins>
@@ -241,30 +236,34 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
-    </build>
+	</build>
 
-    <profiles>
-        <profile>
-            <id>release</id>
-            <build>
-                <plugins>
-                    <!-- Signing with GPG is a requirement for a release deployment (to Maven central) -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.5</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+	<profiles>
+
+		<!-- Release deploy: mvn clean deploy -P release -->
+		<profile>
+			<id>release</id>
+			<build>
+				<plugins>
+
+					<!-- Signing with GPG is a requirement for a release deployment to Maven central. -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.6</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 </project>
