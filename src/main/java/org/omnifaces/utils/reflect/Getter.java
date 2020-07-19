@@ -42,7 +42,7 @@ import java.util.function.Function;
  * <p>
  * This allows a type safe way of defining property names.
  * <p>
- * Inspired by <a href="http://benjiweber.co.uk/blog/2015/08/17/lambda-parameter-names-with-reflection">Lambda parameter names with reflection</a>.
+ * Inspired by <a href="https://benjiweber.co.uk/blog/2015/08/17/lambda-parameter-names-with-reflection/">Lambda parameter names with reflection</a>.
  * NOTE: works only in Java 8u60 and newer.
  *
  * @param <T> The generic base type.
