@@ -14,8 +14,8 @@ package org.omnifaces.utils;
 
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.number.BigDecimalCloseTo.closeTo;
-import static org.junit.Assert.assertThat;
 import static org.omnifaces.utils.math.BigDecimalMath.nRoot;
 
 import java.math.BigDecimal;

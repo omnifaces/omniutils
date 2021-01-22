@@ -76,7 +76,7 @@ public class NameBasedMessageFormatTest {
 		Locale locale = new Locale("nl", "NL");
 
 		assertEquals("Test 54.321", format("Test {integerAsString,number,integer}", locale, parameters));
-		assertEquals("Test € 16,50", format("Test {double,number,currency}", locale, parameters));
+		assertEquals("Test € 16,50", format("Test {double,number,currency}", locale, parameters));
 		assertEquals("Test 1.650%", format("Test {double,number,percent}", locale, parameters));
 
 		assertEquals("Test 1.6,5", format("Test {double,number,#,#.#}", locale, parameters));
@@ -88,9 +88,9 @@ public class NameBasedMessageFormatTest {
 		Map<String, Object> parameters = buildParameters();
 		Locale locale = new Locale("nl", "NL");
 
-		assertEquals("Test 1-jan-2015", format("Test {firstOfJanuary2015,date}", locale, parameters));
-		assertEquals("Test 1-1-15", format("Test {firstOfJanuary2015,date,short}", locale, parameters));
-		assertEquals("Test 1-jan-2015", format("Test {firstOfJanuary2015,date,medium}", locale, parameters));
+		assertEquals("Test 1 jan. 2015", format("Test {firstOfJanuary2015,date}", locale, parameters));
+		assertEquals("Test 01-01-15", format("Test {firstOfJanuary2015,date,short}", locale, parameters));
+		assertEquals("Test 1 jan. 2015", format("Test {firstOfJanuary2015,date,medium}", locale, parameters));
 		assertEquals("Test 1 januari 2015", format("Test {firstOfJanuary2015,date,long}", locale, parameters));
 		assertEquals("Test donderdag 1 januari 2015", format("Test {firstOfJanuary2015,date,full}", locale, parameters));
 
@@ -108,12 +108,12 @@ public class NameBasedMessageFormatTest {
 		assertEquals("Test 16:04", format("Test {404Time,time,short}", locale, parameters));
 		assertEquals("Test 16:04:42", format("Test {404Time,time,medium}", locale, parameters));
 		assertEquals("Test 15:47:58 CET", format("Test {zonedDateTime,time,long}", locale, parameters));
-		assertEquals("Test 15:47:58 uur CET", format("Test {zonedDateTime,time,full}", locale, parameters));
+		assertEquals("Test 15:47:58 Midden-Europese standaardtijd", format("Test {zonedDateTime,time,full}", locale, parameters));
 
 		assertEquals("Test 404", format("Test {404Time,time,hmm}", locale, parameters));
 
 		assertEquals("Test 10:15:30", format("Test {isoLocalTime,time,medium}", locale, parameters));
-		assertEquals("Test 15:16:17 uur -09:00", format("Test {isoOffsetDateTime,time,full}", locale, parameters));
+		assertEquals("Test 15:16:17 -09:00", format("Test {isoOffsetDateTime,time,full}", locale, parameters));
 	}
 
 	@Test
@@ -121,15 +121,15 @@ public class NameBasedMessageFormatTest {
 		Map<String, Object> parameters = buildParameters();
 		Locale locale = new Locale("nl", "NL");
 
-		assertEquals("Test 24-feb-2015 15:47:58", format("Test {zonedDateTime,dateTime}", locale, parameters));
-		assertEquals("Test 24-2-15 15:47", format("Test {zonedDateTime,dateTime,short}", locale, parameters));
-		assertEquals("Test 24-feb-2015 15:47:58", format("Test {zonedDateTime,dateTime,medium}", locale, parameters));
-		assertEquals("Test 24 februari 2015 15:47:58 CET", format("Test {zonedDateTime,dateTime,long}", locale, parameters));
-		assertEquals("Test dinsdag 24 februari 2015 15:47:58 uur CET", format("Test {zonedDateTime,dateTime,full}", locale, parameters));
+		assertEquals("Test 24 feb. 2015 15:47:58", format("Test {zonedDateTime,dateTime}", locale, parameters));
+		assertEquals("Test 24-02-15 15:47", format("Test {zonedDateTime,dateTime,short}", locale, parameters));
+		assertEquals("Test 24 feb. 2015 15:47:58", format("Test {zonedDateTime,dateTime,medium}", locale, parameters));
+		assertEquals("Test 24 februari 2015 om 15:47:58 CET", format("Test {zonedDateTime,dateTime,long}", locale, parameters));
+		assertEquals("Test dinsdag 24 februari 2015 om 15:47:58 Midden-Europese standaardtijd", format("Test {zonedDateTime,dateTime,full}", locale, parameters));
 
-		assertEquals("Test 1-dec-2020 15:35:12", format("Test {localDateTime,dateTime,medium}", locale, parameters));
-		assertEquals("Test donderdag 14 mei 2009 15:16:17 uur -09:00", format("Test {isoOffsetDateTime,dateTime,full}", locale, parameters));
-		assertEquals("Test 15-jan-2012 11:12:13", format("Test {isoLocalDateTime,dateTime,medium}", locale, parameters));
+		assertEquals("Test 1 dec. 2020 15:35:12", format("Test {localDateTime,dateTime,medium}", locale, parameters));
+		assertEquals("Test donderdag 14 mei 2009 om 15:16:17 -09:00", format("Test {isoOffsetDateTime,dateTime,full}", locale, parameters));
+		assertEquals("Test 15 jan. 2012 11:12:13", format("Test {isoLocalDateTime,dateTime,medium}", locale, parameters));
 	}
 
 	@Test
@@ -143,8 +143,8 @@ public class NameBasedMessageFormatTest {
 		assertEquals("Test Number 1.6", format("Test {double,choice,0#ZERO|1#ONE|1<Number {double,number,'#,#'}}", locale, parameters));
 
 		NameBasedMessageFormat messageFormat = new NameBasedMessageFormat("Test {double,choice,0#ZERO|0<Date {zonedDateTime,dateTime,full}}", ENGLISH);
-		assertEquals("Test Date Tuesday, February 24, 2015 3:47:58 PM CET", messageFormat.format(parameters));
-		assertEquals("Test Date dinsdag 24 februari 2015 15:47:58 uur CET", messageFormat.withLocale(locale).format(parameters));
+		assertEquals("Test Date Tuesday, February 24, 2015 at 3:47:58 PM Central European Standard Time", messageFormat.format(parameters));
+		assertEquals("Test Date dinsdag 24 februari 2015 om 15:47:58 Midden-Europese standaardtijd", messageFormat.withLocale(locale).format(parameters));
 	}
 
 	@Test
