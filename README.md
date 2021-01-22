@@ -18,9 +18,11 @@ Maven users can add OmniFaces by adding the following Maven coordinates to the p
 <dependency>
     <groupId>org.omnifaces</groupId>
     <artifactId>omniutils</artifactId>
-    <version>0.11</version>
+    <version>0.12</version>
 </dependency>
 ```
+
+Note that Java 11 support is introduced in version `0.12`. If you're still on Java 8, then use version `0.11` instead.
 
 ## Notes ##
 
