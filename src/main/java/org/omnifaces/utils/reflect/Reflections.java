@@ -286,7 +286,7 @@ public final class Reflections {
 	 */
 	public static <T> T instantiate(Class<T> clazz) {
 		try {
-			return clazz.newInstance();
+			return clazz.getDeclaredConstructor().newInstance();
 		}
 		catch (Exception e) {
 			throw new IllegalStateException(format(ERROR_INSTANTIATE, clazz), e);

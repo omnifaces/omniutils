@@ -109,11 +109,11 @@ public final class Collections {
 	}
 
 	/**
-	 * Returns <tt>true</tt> if the collection is not null and contains the specified element.
+	 * Returns <code>true</code> if the collection is not null and contains the specified element.
 	 *
 	 * @param collection the collection to test for the specified element
 	 * @param object element to test for in the specified collection
-	 * @return <tt>true</tt> if the collection is not null and contains the specified element
+	 * @return <code>true</code> if the collection is not null and contains the specified element
 	 */
 	public static boolean contains(Collection<?> collection, Object object) {
 		return collection != null && collection.contains(object);
