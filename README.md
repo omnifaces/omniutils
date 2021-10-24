@@ -1,6 +1,6 @@
 [![Maven](https://img.shields.io/maven-metadata/v/https/repo.maven.apache.org/maven2/org/omnifaces/omniutils/maven-metadata.xml.svg)](https://repo.maven.apache.org/maven2/org/omnifaces/omniutils/)
 [![Javadoc](https://javadoc.io/badge/org.omnifaces/omniutils.svg)](https://javadoc.io/doc/org.omnifaces/omniutils) 
-[![Travis](https://travis-ci.org/omnifaces/omniutils.svg?branch=develop)](https://travis-ci.org/omnifaces/omniutils)
+[![Tests](https://github.com/omnifaces/omniutils/actions/workflows/maven.yml/badge.svg)](https://github.com/omnifaces/omniutils/actions)
 [![License](https://img.shields.io/:license-apache-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 OmniFaces Utils
