@@ -238,11 +238,13 @@ public final class Lang {
 
 	/**
      * Replaces the last substring of given string that matches the given regular expression with the given replacement.
+     *
+     * Author: https://stackoverflow.com/a/2282998
+     *
 	 * @param string The string to be replaced.
 	 * @param regex The regular expression to which given string is to be matched.
 	 * @param replacement The string to be substituted for the last match.
 	 * @return The resulting string.
-	 * @author https://stackoverflow.com/a/2282998
 	 */
     public static String replaceLast(String string, String regex, String replacement) {
         return string.replaceFirst("(?s)(.*)" + regex, "$1" + replacement);
