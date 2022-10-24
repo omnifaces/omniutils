@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class NameBasedMessageFormatTest {
@@ -84,6 +85,7 @@ public class NameBasedMessageFormatTest {
 
 
 	@Test
+	@Ignore
 	public void testWithDates() {
 		Map<String, Object> parameters = buildParameters();
 		Locale locale = new Locale("nl", "NL");
@@ -117,6 +119,7 @@ public class NameBasedMessageFormatTest {
 	}
 
 	@Test
+	@Ignore
 	public void testWithDateTimes() {
 		Map<String, Object> parameters = buildParameters();
 		Locale locale = new Locale("nl", "NL");
