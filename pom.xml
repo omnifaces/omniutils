@@ -8,7 +8,7 @@
 
 	<groupId>org.omnifaces</groupId>
 	<artifactId>omniutils</artifactId>
-	<version>0.13-SNAPSHOT</version>
+	<version>0.13</version>
 	<packaging>jar</packaging>
 
 	<name>OmniUtils</name>
