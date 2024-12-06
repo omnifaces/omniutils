@@ -18,19 +18,22 @@ import static java.awt.Transparency.OPAQUE;
 import static java.awt.image.BufferedImage.TYPE_INT_ARGB;
 import static java.awt.image.BufferedImage.TYPE_INT_RGB;
 import static java.lang.Math.max;
+import static java.util.stream.IntStream.range;
 import static javax.imageio.ImageIO.read;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.util.Base64;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
 
 public final class Images {
@@ -44,23 +47,23 @@ public final class Images {
 	}
 
 	public static byte[] toPng(BufferedImage image) throws IOException {
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		var output = new ByteArrayOutputStream();
 		ImageIO.write(image, "png", output);
 		return output.toByteArray();
 	}
 
 	public static byte[] toJpg(BufferedImage image) throws IOException {
 		// Start with a white layer to have images with an alpha layer handled correctly.
-		BufferedImage newBufferedImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+		var newBufferedImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
 		newBufferedImage.createGraphics().drawImage(image, 0, 0, Color.WHITE, null);
 
 		// Manually get the ImageWriter to be able to adjust quality
-		ImageWriter writer = ImageIO.getImageWritersBySuffix("jpg").next();
-		ImageWriteParam imageWriterParam = writer.getDefaultWriteParam();
+		var writer = ImageIO.getImageWritersBySuffix("jpg").next();
+		var imageWriterParam = writer.getDefaultWriteParam();
 		imageWriterParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
 		imageWriterParam.setCompressionQuality(1f);
 
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		var output = new ByteArrayOutputStream();
 		writer.setOutput(new MemoryCacheImageOutputStream(output));
 		writer.write(null, new IIOImage(newBufferedImage, null, null), imageWriterParam);
 		writer.dispose();
@@ -69,10 +72,10 @@ public final class Images {
 	}
 
 	public static BufferedImage cropImage(BufferedImage image, int desiredWidth, int desiredHeight) {
-		boolean cropHorizontally = (image.getWidth() > desiredWidth);
+		var cropHorizontally = image.getWidth() > desiredWidth;
 
-		int x = cropHorizontally ? (image.getWidth() - desiredWidth) / 2 : 0;
-		int y = cropHorizontally ? 0 : (image.getHeight() - desiredHeight) / 2;
+		var x = cropHorizontally ? (image.getWidth() - desiredWidth) / 2 : 0;
+		var y = cropHorizontally ? 0 : (image.getHeight() - desiredHeight) / 2;
 
 		return image.getSubimage(x, y, desiredWidth, desiredHeight);
 	}
@@ -89,45 +92,79 @@ public final class Images {
 			return cropToSquareImage(image);
 		}
 
-		double currentAspectRatio = image.getWidth() * 1.0 / image.getHeight();
+		var currentAspectRatio = image.getWidth() * 1.0 / image.getHeight();
 
 		if (currentAspectRatio == desiredAspectRatio) {
 			return image;
 		}
 
-		boolean cropHorizontally = (currentAspectRatio > desiredAspectRatio);
-
-		int desiredWidth = cropHorizontally ? (int) (image.getHeight() * desiredAspectRatio) : image.getWidth();
-		int desiredHeight = cropHorizontally ? image.getHeight() : (int) (image.getWidth() / desiredAspectRatio);
-
+		var cropHorizontally = currentAspectRatio > desiredAspectRatio;
+		var desiredWidth = cropHorizontally ? (int) (image.getHeight() * desiredAspectRatio) : image.getWidth();
+		var desiredHeight = cropHorizontally ? image.getHeight() : (int) (image.getWidth() / desiredAspectRatio);
 		return cropImage(image, desiredWidth, desiredHeight);
 	}
 
 	public static BufferedImage cropToSquareImage(BufferedImage image) {
-		boolean cropHorizontally = (image.getWidth() > image.getHeight());
-
-		int desiredSize = cropHorizontally ? image.getHeight() : image.getWidth();
-
+		var cropHorizontally = image.getWidth() > image.getHeight();
+		var desiredSize = cropHorizontally ? image.getHeight() : image.getWidth();
 		return cropImage(image, desiredSize, desiredSize);
 	}
 
 	public static BufferedImage progressiveBilinearDownscale(BufferedImage image, int desiredWidth, int desiredHeight) {
-		BufferedImage rescaledImage = image;
+		var rescaledImage = image;
 
 		while (rescaledImage.getWidth() > desiredWidth || rescaledImage.getHeight() > desiredHeight) {
-			int nextWidth = max(rescaledImage.getWidth() / 2, desiredWidth);
-			int nextHeight = max(rescaledImage.getHeight() / 2, desiredHeight);
-
-			BufferedImage nextScaledImage = new BufferedImage(nextWidth, nextHeight, image.getTransparency() == OPAQUE ? TYPE_INT_RGB : TYPE_INT_ARGB);
-			Graphics2D graphics = nextScaledImage.createGraphics();
+			var nextWidth = max(rescaledImage.getWidth() / 2, desiredWidth);
+			var nextHeight = max(rescaledImage.getHeight() / 2, desiredHeight);
+			var nextScaledImage = new BufferedImage(nextWidth, nextHeight, image.getTransparency() == OPAQUE ? TYPE_INT_RGB : TYPE_INT_ARGB);
+			var graphics = nextScaledImage.createGraphics();
 			graphics.setRenderingHint(KEY_INTERPOLATION, VALUE_INTERPOLATION_BILINEAR);
 			graphics.drawImage(rescaledImage, 0, 0, nextWidth, nextHeight, null);
 			graphics.dispose();
-
 			rescaledImage = nextScaledImage;
 		}
 
 		return rescaledImage;
 	}
 
+    public static BufferedImage grayscale(BufferedImage image) {
+        var grayscale = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
+        var g = grayscale.getGraphics();
+        g.drawImage(image, 0, 0, null);
+        g.dispose();
+        return grayscale;
+    }
+
+    /**
+     * https://apiumhub.com/tech-blog-barcelona/introduction-perceptual-hashes-measuring-similarity/
+     */
+	public static String computePerceptualHash(BufferedImage image, int size, int base) {
+        if (size < 8 || size > 32) {
+            throw new IllegalArgumentException("size " + size + " must be between 8 and 32");
+        }
+        if (base != 2 && base != 10 && base != 16 && base != 32 && base != 36 && base != 64) {
+            throw new IllegalArgumentException("base " + base + " must be 2, 10, 16, 32, 36 or 64");
+        }
+
+        var grayscale = grayscale(progressiveBilinearDownscale(image, size, size));
+        Consumer<Consumer<Integer>> forEachPixel = perPixel -> range(0, size).forEach(x -> range(0, size).forEach(y -> perPixel.accept(grayscale.getRGB(x, y) & 0xFF)));
+        var totalPixelValue = new AtomicInteger();
+        forEachPixel.accept(pixel -> totalPixelValue.addAndGet(pixel));
+        var averagePixelValue = totalPixelValue.get() / (size * size);
+        var perceptualHash = new StringBuilder();
+        forEachPixel.accept(pixel -> perceptualHash.append(pixel > averagePixelValue ? "1" : "0"));
+        var hash = perceptualHash.toString();
+
+        if (base == 2) {
+            return hash;
+        } else {
+            var integer = new BigInteger(hash, 2);
+
+            if (base == 64) {
+                return Base64.getEncoder().encodeToString(integer.toByteArray());
+            } else {
+                return integer.toString(base);
+            }
+        }
+    }
 }
