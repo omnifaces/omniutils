@@ -188,12 +188,7 @@ public final class Reflections {
 
     private static void collectMethods(List<Method> methods, Class<?> type, boolean iface, String methodName, Object... params) {
         for (Method method : type.getDeclaredMethods()) {
-            System.out.println(type + " --> " + method.getName());
-            if (method.getName().equals(methodName)) {
-                System.out.println(" ==> found! --> "+ method.getParameterTypes().length + " ==  " + params.length);
-            }
             if ((!iface || method.isDefault()) && method.getName().equals(methodName) && method.getParameterTypes().length == params.length && isNotOverridden(methods, method)) {
-                System.out.println(" ==> added!");
                 methods.add(method);
             }
         }
