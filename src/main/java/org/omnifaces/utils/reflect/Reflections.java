@@ -44,6 +44,17 @@ public final class Reflections {
 	private static final String ERROR_INVOKE_METHOD = "Cannot invoke method '%s' of class '%s' with arguments %s.";
 	private static final String ERROR_MAP_FIELD = "Cannot map field '%s' from %s to %s.";
 
+    private static final Map<Class<?>, Class<?>> PRIMITIVE_TYPES = Map.of(
+        Boolean.class, boolean.class,
+        Byte.class, byte.class,
+        Short.class, short.class,
+        Character.class, char.class,
+        Integer.class, int.class,
+        Long.class, long.class,
+        Float.class, float.class,
+        Double.class, double.class
+    );
+
 	private Reflections() {
 		// Hide constructor.
 	}
@@ -151,13 +162,13 @@ public final class Reflections {
 
 		List<Method> methods = new ArrayList<>();
 
-		for (Class<?> cls = base.getClass(); cls != null; cls = cls.getSuperclass()) {
-			for (Method method : cls.getDeclaredMethods()) {
-				if (method.getName().equals(methodName) && method.getParameterTypes().length == params.length && isNotOverridden(methods, method)) {
-					methods.add(method);
-				}
-			}
-		}
+        for (var cls = base instanceof Class ? (Class<?>) base : base.getClass(); cls != null; cls = cls.getSuperclass()) {
+            collectMethods(methods, cls, false, methodName, params);
+
+            for (Class<?> iface : cls.getInterfaces()) {
+                collectInterfaceMethods(methods, iface, methodName, params);
+            }
+        }
 
 		if (methods.size() == 1) {
 			return Optional.of(methods.get(0));
@@ -166,6 +177,27 @@ public final class Reflections {
 			return Optional.ofNullable(closestMatchingMethod(methods, params)); // Overloaded methods were found. Try to find closest match.
 		}
 	}
+
+    private static void collectInterfaceMethods(List<Method> methods, Class<?> iface, String methodName, Object... params) {
+        collectMethods(methods, iface, true, methodName, params);
+
+        for (Class<?> superiface : iface.getInterfaces()) {
+            collectInterfaceMethods(methods, superiface, methodName, params);
+        }
+    }
+
+    private static void collectMethods(List<Method> methods, Class<?> type, boolean iface, String methodName, Object... params) {
+        for (Method method : type.getDeclaredMethods()) {
+            System.out.println(type + " --> " + method.getName());
+            if (method.getName().equals(methodName)) {
+                System.out.println(" ==> found! --> "+ method.getParameterTypes().length + " ==  " + params.length);
+            }
+            if ((!iface || method.isDefault()) && method.getName().equals(methodName) && method.getParameterTypes().length == params.length && isNotOverridden(methods, method)) {
+                System.out.println(" ==> added!");
+                methods.add(method);
+            }
+        }
+    }
 
 	private static boolean isNotOverridden(List<Method> methodsWithSameName, Method method) {
 		for (Method methodWithSameName : methodsWithSameName) {
@@ -177,28 +209,42 @@ public final class Reflections {
 		return true;
 	}
 
-	private static Method closestMatchingMethod(List<Method> methods, Object... params) {
-		for (Method method : methods) {
-			Class<?>[] candidateParams = method.getParameterTypes();
-			boolean match = true;
+    private static Method closestMatchingMethod(List<Method> methods, Object... params) {
+        for (Method method : methods) {
+            var candidateParamTypes = method.getParameterTypes();
+            var match = true;
 
-			for (int i = 0; i < params.length; i++) {
-				if (!candidateParams[i].isInstance(params[i])) {
-					match = false;
-					break;
-				}
-			}
+            for (var i = 0; i < params.length; i++) {
+                if (!isAssignable(params[i], candidateParamTypes[i])) {
+                    match = false;
+                    break;
+                }
+            }
 
-			// If all candidate parameters were expected and for none of them the actual parameter was NOT an instance, we have a match.
-			if (match) {
-				return method;
-			}
+            // If all candidate parameters were expected and for none of them the actual parameter was NOT an instance, we have a match.
+            if (match) {
+                return method;
+            }
 
-			// Else, at least one parameter was not an instance. Go ahead a test then next methods.
-		}
+            // Else, at least one parameter was not an instance. Go ahead a test then next methods.
+        }
 
-		return null;
-	}
+        return null;
+    }
+
+    private static boolean isAssignable(Object source, Class<?> targetType) {
+        var sourceType = source instanceof Class ? (Class<?>) source : source != null ? source.getClass() : null;
+
+        if (sourceType != null && targetType.isPrimitive()) {
+            sourceType = getPrimitiveType(sourceType);
+        }
+
+        return sourceType == null ? !targetType.isPrimitive() : targetType.isAssignableFrom(sourceType);
+    }
+
+    public static Class<?> getPrimitiveType(Class<?> cls) {
+        return cls.isPrimitive() ? cls : PRIMITIVE_TYPES.get(cls);
+    }
 
 	/**
 	 * Returns the class object associated with the given class name, using the context class loader and if
@@ -212,7 +258,7 @@ public final class Reflections {
 	@SuppressWarnings("unchecked")
 	public static <T> Class<T> toClass(String className) {
 		try {
-			return (Class<T>) (Class.forName(className, true, Thread.currentThread().getContextClassLoader()));
+			return (Class<T>) Class.forName(className, true, Thread.currentThread().getContextClassLoader());
 		}
 		catch (Exception e) {
 			try {
@@ -304,7 +350,7 @@ public final class Reflections {
 	 */
 	public static <T> T accessField(Object instance, String fieldName) {
 		try {
-			Field field = findField(instance, fieldName).orElseThrow(NoSuchFieldException::new);
+			var field = findField(instance, fieldName).orElseThrow(NoSuchFieldException::new);
 			return accessField(instance, field);
 		}
 		catch (Exception e) {
@@ -344,7 +390,7 @@ public final class Reflections {
 	 */
 	public static <T> T modifyField(Object instance, String fieldName, T value) {
 		try {
-			Field field = findField(instance, fieldName).orElseThrow(NoSuchFieldException::new);
+			var field = findField(instance, fieldName).orElseThrow(NoSuchFieldException::new);
 			return modifyField(instance, field, value);
 		}
 		catch (Exception e) {
@@ -366,7 +412,7 @@ public final class Reflections {
 	public static <T> T modifyField(Object instance, Field field, T value) {
 		try {
 			field.setAccessible(true);
-			Object oldValue = field.get(instance);
+			var oldValue = field.get(instance);
 			field.set(instance, value);
 			return (T) oldValue;
 		}
@@ -390,7 +436,7 @@ public final class Reflections {
 	 */
 	public static <T> T invokeMethod(Object instance, String methodName, Object... parameters) {
 		try {
-			Method method = findMethod(instance, methodName, parameters).orElseThrow(NoSuchMethodException::new);
+			var method = findMethod(instance, methodName, parameters).orElseThrow(NoSuchMethodException::new);
 			return invokeMethod(instance, method, parameters);
 		}
 		catch (Exception e) {
@@ -431,12 +477,12 @@ public final class Reflections {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T invokeGetter(Object instance, String propertyName) {
-		Object result = instance;
+		var result = instance;
 
 		for (String propertyNameItem : propertyName.split("\\."))
 		{
-			String capitalizedPropertyName = capitalize(propertyNameItem);
-			Optional<Method> booleanGetter = findMethod(result, "is" + capitalizedPropertyName);
+			var capitalizedPropertyName = capitalize(propertyNameItem);
+			var booleanGetter = findMethod(result, "is" + capitalizedPropertyName);
 
 			if (booleanGetter.isPresent()) {
 				result = invokeMethod(result, booleanGetter.get());
@@ -458,17 +504,17 @@ public final class Reflections {
 	 * @throws IllegalStateException If the setter method cannot be invoked.
 	 */
 	public static void invokeSetter(Object instance, String propertyName, Object propertyValue) {
-		Object target = instance;
-		String setterPropertyName = propertyName;
-		int recurse = propertyName.lastIndexOf('.');
+		var target = instance;
+		var setterPropertyName = propertyName;
+		var recurse = propertyName.lastIndexOf('.');
 
 		if (recurse > 0) {
-			String getterPropertyName = propertyName.substring(0, recurse);
+			var getterPropertyName = propertyName.substring(0, recurse);
 			target = invokeGetter(target, getterPropertyName);
 			setterPropertyName = propertyName.substring(recurse + 1);
 		}
 
-		String capitalizedPropertyName = capitalize(setterPropertyName);
+		var capitalizedPropertyName = capitalize(setterPropertyName);
 		invokeMethod(target, "set" + capitalizedPropertyName, propertyValue);
 	}
 
@@ -482,7 +528,7 @@ public final class Reflections {
 	 */
 	public static <T> void map(Member member, T from, T to) {
 		if (member instanceof Field) {
-			Field field = (Field) member;
+			var field = (Field) member;
 
 			try {
 				field.setAccessible(true);
@@ -507,15 +553,15 @@ public final class Reflections {
 	 */
 	public static <T> List<Class<?>> getActualTypeArguments(Class<? extends T> subclass, Class<T> superclass) {
 		Map<TypeVariable<?>, Type> typeMapping = new HashMap<>();
-		Type actualType = subclass.getGenericSuperclass();
+		var actualType = subclass.getGenericSuperclass();
 
 		while (!(actualType instanceof ParameterizedType) || !superclass.equals(((ParameterizedType) actualType).getRawType())) {
 			if (actualType instanceof ParameterizedType) {
 				Class<?> rawType = (Class<?>) ((ParameterizedType) actualType).getRawType();
 				TypeVariable<?>[] typeParameters = rawType.getTypeParameters();
 
-				for (int i = 0; i < typeParameters.length; i++) {
-					Type typeArgument = ((ParameterizedType) actualType).getActualTypeArguments()[i];
+				for (var i = 0; i < typeParameters.length; i++) {
+					var typeArgument = ((ParameterizedType) actualType).getActualTypeArguments()[i];
 					typeMapping.put(typeParameters[i], typeArgument instanceof TypeVariable ? typeMapping.get(typeArgument) : typeArgument);
 				}
 
