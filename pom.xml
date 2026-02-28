@@ -8,7 +8,7 @@
 
 	<groupId>org.omnifaces</groupId>
 	<artifactId>omniutils</artifactId>
-	<version>0.16</version>
+	<version>0.17</version>
 	<packaging>jar</packaging>
 
 	<name>OmniUtils</name>
@@ -209,80 +209,53 @@
 				</configuration>
 			</plugin>
 
-			<!-- Configure snapshot deployment to Sonatype. -->
-			<plugin>
-				<groupId>org.sonatype.plugins</groupId>
-				<artifactId>nexus-staging-maven-plugin</artifactId>
-				<version>1.6.13</version>
-				<extensions>true</extensions>
-				<configuration>
-					<serverId>ossrh</serverId>
-					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
-					<autoReleaseAfterClose>true</autoReleaseAfterClose>
-				</configuration>
-			</plugin>
+            <!-- Configure snapshot deployment (release deployment is done via 'release' profile). -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>3.1.4</version>
+                <configuration>
+                    <skip>false</skip>
+                </configuration>
+            </plugin>
 		</plugins>
-
-		<pluginManagement>
-			<plugins>
-
-				<!-- Make sure Eclipse itself also runs license format during build. -->
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>com.mycila</groupId>
-										<artifactId>license-maven-plugin</artifactId>
-										<versionRange>[4.1,)</versionRange>
-										<goals>
-											<goal>format</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<execute>
-											<runOnConfiguration>true</runOnConfiguration>
-										</execute>
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 	</build>
 
 	<profiles>
 
-		<!-- Release deploy: mvn clean deploy -P release -->
-		<profile>
-			<id>release</id>
-			<build>
-				<plugins>
+        <!-- Release deploy: mvn clean deploy -P release -->
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.10.0</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <autoPublish>true</autoPublish>
+                        </configuration>
+                    </plugin>
 
-					<!-- Signing with GPG is a requirement for a release deployment to Maven central. -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-gpg-plugin</artifactId>
-						<version>3.0.1</version>
-						<executions>
-							<execution>
-								<id>sign-artifacts</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>sign</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
+                    <!-- Signing with GPG is a requirement for a release deployment to Maven central. -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>3.2.8</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
 	</profiles>
 
 </project>
