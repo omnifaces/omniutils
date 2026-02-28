@@ -461,6 +461,19 @@ public final class Reflections {
 	}
 
 	/**
+	 * Finds a getter method for the given type and property name.
+	 * It will first try to find an "is" prefixed method, and if not found, a "get" prefixed method.
+	 * @param type The type to find the getter method on.
+	 * @param propertyName The property name of the getter method to be found.
+	 * @return The found getter method, if any.
+	 */
+	public static Optional<Method> findGetter(Class<?> type, String propertyName) {
+		var capitalizedPropertyName = capitalize(propertyName);
+		var booleanGetter = findMethod(type, "is" + capitalizedPropertyName);
+		return booleanGetter.isPresent() ? booleanGetter : findMethod(type, "get" + capitalizedPropertyName);
+	}
+
+	/**
 	 * Invoke getter method of the given instance on the given property name and return the result.
 	 * If the property name is dot-separated, then it will be invoked recursively.
 	 * @param <T> The expected return type.
@@ -474,20 +487,24 @@ public final class Reflections {
 	public static <T> T invokeGetter(Object instance, String propertyName) {
 		var result = instance;
 
-		for (String propertyNameItem : propertyName.split("\\."))
-		{
-			var capitalizedPropertyName = capitalize(propertyNameItem);
-			var booleanGetter = findMethod(result, "is" + capitalizedPropertyName);
-
-			if (booleanGetter.isPresent()) {
-				result = invokeMethod(result, booleanGetter.get());
-			}
-			else {
-				result = invokeMethod(result, "get" + capitalizedPropertyName);
-			}
+		for (String propertyNameItem : propertyName.split("\\.")) {
+			var target = result;
+			result = invokeMethod(target, findGetter(target.getClass(), propertyNameItem)
+				.orElseThrow(() -> new IllegalStateException(format(ERROR_INVOKE_METHOD, "is/get" + capitalize(propertyNameItem), target.getClass(), "[]"))));
 		}
 
 		return (T) result;
+	}
+
+	/**
+	 * Finds a setter method for the given type, property name and property value.
+	 * @param type The type to find the setter method on.
+	 * @param propertyName The property name of the setter method to be found.
+	 * @param propertyValue The property value to be set.
+	 * @return The found setter method, if any.
+	 */
+	public static Optional<Method> findSetter(Class<?> type, String propertyName, Object propertyValue) {
+		return findMethod(type, "set" + capitalize(propertyName), propertyValue);
 	}
 
 	/**
