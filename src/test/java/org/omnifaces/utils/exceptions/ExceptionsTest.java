@@ -14,9 +14,10 @@ package org.omnifaces.utils.exceptions;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.omnifaces.utils.exceptions.Exceptions.excludeAll;
 import static org.omnifaces.utils.exceptions.Exceptions.excludeFromStackTrace;
 import static org.omnifaces.utils.exceptions.Exceptions.excludeJavaEE;
@@ -25,7 +26,7 @@ import static org.omnifaces.utils.exceptions.Exceptions.getRecursiveStackTrace;
 
 import java.util.function.Predicate;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ExceptionsTest {
 
@@ -79,9 +80,9 @@ public class ExceptionsTest {
 		assertTrue(predicate.test(new StackTraceElement("any.Class", "method", "Class.java", 1)));
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void excludeFromStackTraceNullListThrows() {
-		excludeFromStackTrace(null);
+		assertThrows(NullPointerException.class, () -> excludeFromStackTrace(null));
 	}
 
 

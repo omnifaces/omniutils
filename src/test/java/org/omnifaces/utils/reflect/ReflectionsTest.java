@@ -12,11 +12,12 @@
  */
 package org.omnifaces.utils.reflect;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.omnifaces.utils.reflect.Reflections.accessField;
 import static org.omnifaces.utils.reflect.Reflections.findClass;
 import static org.omnifaces.utils.reflect.Reflections.findConstructor;
@@ -43,7 +44,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ReflectionsTest {
 
@@ -125,9 +126,9 @@ public class ReflectionsTest {
 		assertEquals(3, fields.size());
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void listAnnotatedFieldsWithNoAnnotationsThrows() {
-		listAnnotatedFields(Child.class);
+		assertThrows(IllegalArgumentException.class, () -> listAnnotatedFields(Child.class));
 	}
 
 
@@ -138,9 +139,9 @@ public class ReflectionsTest {
 		assertTrue(enums.contains(Color.class));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void listAnnotatedEnumFieldsWithNoAnnotationsThrows() {
-		listAnnotatedEnumFields(WithEnumFields.class);
+		assertThrows(IllegalArgumentException.class, () -> listAnnotatedEnumFields(WithEnumFields.class));
 	}
 
 
@@ -178,9 +179,9 @@ public class ReflectionsTest {
 		assertEquals(String.class, toClass("java.lang.String"));
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void toClassThrowsForUnknownName() {
-		toClass("com.example.DoesNotExist");
+		assertThrows(IllegalStateException.class, () -> toClass("com.example.DoesNotExist"));
 	}
 
 
@@ -220,9 +221,9 @@ public class ReflectionsTest {
 		assertTrue(instance instanceof StringBuilder);
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void instantiateClassWithNoDefaultConstructorThrows() {
-		instantiate(NoDefaultConstructor.class);
+		assertThrows(IllegalStateException.class, () -> instantiate(NoDefaultConstructor.class));
 	}
 
 
@@ -236,9 +237,9 @@ public class ReflectionsTest {
 		assertEquals("base", accessField(new Child(), "baseField"));
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void accessFieldByNameThrowsWhenNotFound() {
-		accessField(new Child(), "nonExistent");
+		assertThrows(IllegalStateException.class, () -> accessField(new Child(), "nonExistent"));
 	}
 
 	@Test
@@ -271,9 +272,9 @@ public class ReflectionsTest {
 		assertEquals("child", invokeMethod(new Child(), "getChildField"));
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void invokeMethodByNameThrowsWhenNotFound() {
-		invokeMethod(new Child(), "nonExistentMethod");
+		assertThrows(IllegalStateException.class, () -> invokeMethod(new Child(), "nonExistentMethod"));
 	}
 
 	@Test
@@ -350,9 +351,10 @@ public class ReflectionsTest {
 		assertEquals("fromValue", accessField(to, "childField"));
 	}
 
-	@Test(expected = UnsupportedOperationException.class)
+	@Test
 	public void mapWithNonFieldMemberThrows() throws NoSuchMethodException {
-		map(Child.class.getDeclaredMethod("getChildField"), new Child(), new Child());
+		Method method = Child.class.getDeclaredMethod("getChildField");
+		assertThrows(UnsupportedOperationException.class, () -> map(method, new Child(), new Child()));
 	}
 
 

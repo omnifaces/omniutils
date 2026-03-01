@@ -12,13 +12,13 @@
  */
 package org.omnifaces.utils.time;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.omnifaces.utils.time.TemporalAdjusters.nextDayOfMonth;
 import static org.omnifaces.utils.time.TemporalAdjusters.nextOrSameDayOfMonth;
 
 import java.time.LocalDate;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TemporalAdjustersTest {
 

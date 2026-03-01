@@ -14,7 +14,7 @@ package org.omnifaces.utils;
 
 import static java.util.Comparator.naturalOrder;
 import static java.util.stream.Collectors.toList;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.omnifaces.utils.Comparators.firstWhen;
 import static org.omnifaces.utils.Comparators.lastWhen;
 
@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ComparatorsTest {
 

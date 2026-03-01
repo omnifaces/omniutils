@@ -13,10 +13,11 @@
 package org.omnifaces.utils;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.omnifaces.utils.Collections.contains;
 import static org.omnifaces.utils.Collections.iterableToList;
 import static org.omnifaces.utils.Collections.reverse;
@@ -27,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CollectionsTest {
 
@@ -58,10 +59,10 @@ public class CollectionsTest {
 		assertTrue(set.contains("c"));
 	}
 
-	@Test(expected = UnsupportedOperationException.class)
+	@Test
 	public void unmodifiableSetRejectsModification() {
 		Set<String> set = unmodifiableSet("a");
-		set.add("b");
+		assertThrows(UnsupportedOperationException.class, () -> set.add("b"));
 	}
 
 

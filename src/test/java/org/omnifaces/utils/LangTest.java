@@ -16,12 +16,12 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.omnifaces.utils.Lang.capitalize;
 import static org.omnifaces.utils.Lang.coalesce;
 import static org.omnifaces.utils.Lang.containsIsoControlCharacters;
@@ -45,13 +45,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class LangTest {
 
 	@Test
 	public void setIfNotEmptyTest() {
-		setIfNotEmpty(emptyList(), collection -> fail());
+		setIfNotEmpty(emptyList(), collection -> org.junit.jupiter.api.Assertions.fail());
 
 		AtomicReference<List<String>> reference = new AtomicReference<>();
 
@@ -254,9 +254,9 @@ public class LangTest {
 		assertEquals("hello", requireNotEmpty("hello", () -> new Exception("empty")));
 	}
 
-	@Test(expected = Exception.class)
-	public void requireNotEmptyThrowsWhenEmpty() throws Exception {
-		requireNotEmpty("", () -> new Exception("empty"));
+	@Test
+	public void requireNotEmptyThrowsWhenEmpty() {
+		assertThrows(Exception.class, () -> requireNotEmpty("", () -> new Exception("empty")));
 	}
 
 	@Test

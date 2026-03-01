@@ -13,15 +13,13 @@
 package org.omnifaces.utils;
 
 import static java.math.BigDecimal.TEN;
-import static java.math.BigDecimal.ZERO;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.number.BigDecimalCloseTo.closeTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.omnifaces.utils.math.BigDecimalMath.nRoot;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class BigDecimalMathTest {
 
@@ -29,7 +27,7 @@ public class BigDecimalMathTest {
 	public void testNRoot() {
 		MathContext context = new MathContext(10);
 
-		assertThat(nRoot(BigDecimal.valueOf(100), 2, context), closeTo(TEN, ZERO));
-		assertThat(nRoot(BigDecimal.valueOf(256), 8, context), closeTo(BigDecimal.valueOf(2), ZERO));
+		assertEquals(0, nRoot(BigDecimal.valueOf(100), 2, context).compareTo(TEN));
+		assertEquals(0, nRoot(BigDecimal.valueOf(256), 8, context).compareTo(BigDecimal.valueOf(2)));
 	}
 }

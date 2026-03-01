@@ -14,7 +14,7 @@ package org.omnifaces.utils.text;
 
 import static java.util.Collections.emptyMap;
 import static java.util.Locale.ENGLISH;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class NameBasedMessageFormatTest {
 
@@ -76,7 +76,7 @@ public class NameBasedMessageFormatTest {
 		Locale locale = new Locale("nl", "NL");
 
 		assertEquals("Test 54.321", format("Test {integerAsString,number,integer}", locale, parameters));
-		assertEquals("Test € 16,50", format("Test {double,number,currency}", locale, parameters));
+		assertEquals("Test €\u00a016,50", format("Test {double,number,currency}", locale, parameters));
 		assertEquals("Test 1.650%", format("Test {double,number,percent}", locale, parameters));
 
 		assertEquals("Test 1.6,5", format("Test {double,number,#,#.#}", locale, parameters));

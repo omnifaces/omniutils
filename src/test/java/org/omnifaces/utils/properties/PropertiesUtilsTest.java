@@ -12,7 +12,8 @@
  */
 package org.omnifaces.utils.properties;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.omnifaces.utils.properties.PropertiesUtils.PropertiesFormat.LIST;
 import static org.omnifaces.utils.properties.PropertiesUtils.PropertiesFormat.XML;
 import static org.omnifaces.utils.properties.PropertiesUtils.getStage;
@@ -23,7 +24,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class PropertiesUtilsTest {
 
@@ -46,10 +47,10 @@ public class PropertiesUtilsTest {
 		assertEquals("development", getStage(STAGE_PROPERTY, "development"));
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void getStageThrowsWhenSystemPropertyIsNotSetAndDefaultIsNull() {
 		System.clearProperty(STAGE_PROPERTY);
-		getStage(STAGE_PROPERTY, null);
+		assertThrows(IllegalStateException.class, () -> getStage(STAGE_PROPERTY, null));
 	}
 
 	@Test

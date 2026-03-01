@@ -13,11 +13,11 @@
 package org.omnifaces.utils;
 
 import static java.util.Comparator.reverseOrder;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.omnifaces.utils.Comparisons.max;
 import static org.omnifaces.utils.Comparisons.min;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ComparisonsTest {
 
