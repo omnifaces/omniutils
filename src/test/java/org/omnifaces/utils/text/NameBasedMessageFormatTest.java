@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class NameBasedMessageFormatTest {
@@ -85,13 +84,12 @@ public class NameBasedMessageFormatTest {
 
 
 	@Test
-	@Ignore
 	public void testWithDates() {
 		Map<String, Object> parameters = buildParameters();
 		Locale locale = new Locale("nl", "NL");
 
 		assertEquals("Test 1 jan. 2015", format("Test {firstOfJanuary2015,date}", locale, parameters));
-		assertEquals("Test 01-01-15", format("Test {firstOfJanuary2015,date,short}", locale, parameters));
+		assertEquals("Test 01-01-2015", format("Test {firstOfJanuary2015,date,short}", locale, parameters));
 		assertEquals("Test 1 jan. 2015", format("Test {firstOfJanuary2015,date,medium}", locale, parameters));
 		assertEquals("Test 1 januari 2015", format("Test {firstOfJanuary2015,date,long}", locale, parameters));
 		assertEquals("Test donderdag 1 januari 2015", format("Test {firstOfJanuary2015,date,full}", locale, parameters));
@@ -119,13 +117,12 @@ public class NameBasedMessageFormatTest {
 	}
 
 	@Test
-	@Ignore
 	public void testWithDateTimes() {
 		Map<String, Object> parameters = buildParameters();
 		Locale locale = new Locale("nl", "NL");
 
 		assertEquals("Test 24 feb. 2015 15:47:58", format("Test {zonedDateTime,dateTime}", locale, parameters));
-		assertEquals("Test 24-02-15 15:47", format("Test {zonedDateTime,dateTime,short}", locale, parameters));
+		assertEquals("Test 24-02-2015 15:47", format("Test {zonedDateTime,dateTime,short}", locale, parameters));
 		assertEquals("Test 24 feb. 2015 15:47:58", format("Test {zonedDateTime,dateTime,medium}", locale, parameters));
 		assertEquals("Test 24 februari 2015 om 15:47:58 CET", format("Test {zonedDateTime,dateTime,long}", locale, parameters));
 		assertEquals("Test dinsdag 24 februari 2015 om 15:47:58 Midden-Europese standaardtijd", format("Test {zonedDateTime,dateTime,full}", locale, parameters));
