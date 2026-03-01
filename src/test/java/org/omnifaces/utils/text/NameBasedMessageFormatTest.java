@@ -44,7 +44,7 @@ public class NameBasedMessageFormatTest {
 		assertEquals("Test15", new NameBasedMessageFormat("Test{integer}").format(parameters));
 	}
 
-	private Map<String, Object> buildParameters() {
+	private static Map<String, Object> buildParameters() {
 		Map<String, Object> parameters = new HashMap<>();
 
 		parameters.put("integer", 15);
@@ -172,11 +172,11 @@ public class NameBasedMessageFormatTest {
 		assertEquals("{zero1,optional,'Is missing}", format("'{zero1,optional,''Is missing}'", parameters));
 	}
 
-	private String format(String formatPattern, Locale locale, Map<String, Object> parameters) {
+	private static String format(String formatPattern, Locale locale, Map<String, Object> parameters) {
 		return new NameBasedMessageFormat(formatPattern, locale).format(parameters);
 	}
 
-	private String format(String formatPattern, Map<String, Object> parameters) {
+	private static String format(String formatPattern, Map<String, Object> parameters) {
 		return new NameBasedMessageFormat(formatPattern).format(parameters);
 	}
 }
