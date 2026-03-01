@@ -77,7 +77,8 @@ class SummaryCollector<T> implements Collector<T, Summary<T>, Summary<T>> {
 			count++;
 		}
 
-		public void combine(Summary<T> summary) {
+		@Override
+        public void combine(Summary<T> summary) {
 			if (count == 0) {
 				min = summary.getMin();
 				max = summary.getMax();

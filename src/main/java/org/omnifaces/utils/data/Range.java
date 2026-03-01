@@ -116,7 +116,7 @@ public interface Range<N> {
 
 		N start = contains(min) ? min : incrementer.apply(min);
 
-		Iterator<N> iterator = new Iterator<N>() {
+		Iterator<N> iterator = new Iterator<>() {
 
 			private N next = start;
 

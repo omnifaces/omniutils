@@ -15,6 +15,7 @@ package org.omnifaces.utils.time;
 import static java.time.temporal.ChronoField.DAY_OF_MONTH;
 import static java.time.temporal.TemporalAdjusters.firstDayOfNextMonth;
 
+import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAdjuster;
 import java.time.temporal.ValueRange;
 
@@ -27,13 +28,14 @@ public final class TemporalAdjusters {
 		validateDayOfMonth(dayOfMonth);
 
 		return temporal -> {
-			int currentDayOfMonth = temporal.get(DAY_OF_MONTH);
+		    Temporal adjustedTemporal = temporal;
+			int currentDayOfMonth = adjustedTemporal.get(DAY_OF_MONTH);
 
-			if(currentDayOfMonth >= dayOfMonth || temporal.range(DAY_OF_MONTH).getMaximum() == currentDayOfMonth) {
-				temporal = temporal.with(firstDayOfNextMonth());
+			if(currentDayOfMonth >= dayOfMonth || adjustedTemporal.range(DAY_OF_MONTH).getMaximum() == currentDayOfMonth) {
+			    adjustedTemporal = adjustedTemporal.with(firstDayOfNextMonth());
 			}
 
-			ValueRange dayRange = temporal.range(DAY_OF_MONTH);
+			ValueRange dayRange = adjustedTemporal.range(DAY_OF_MONTH);
 
 			int newDayOfMonth = dayOfMonth;
 
@@ -41,7 +43,7 @@ public final class TemporalAdjusters {
 				newDayOfMonth = (int) dayRange.getMaximum();
 			}
 
-			return temporal.with(DAY_OF_MONTH, newDayOfMonth);
+			return adjustedTemporal.with(DAY_OF_MONTH, newDayOfMonth);
 		};
 	}
 
