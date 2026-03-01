@@ -67,8 +67,8 @@
 		<!-- Essential Maven defaults. -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<maven.compiler.source>${javase.version}</maven.compiler.source>
-		<maven.compiler.target>${javase.version}</maven.compiler.target>
+		<maven.compiler.release>${javase.version}</maven.compiler.release>
+        <maven.source.excludeResources>true</maven.source.excludeResources>
 	</properties>
 
 	<dependencies>
@@ -96,95 +96,107 @@
 
 	<build>
 		<plugins>
-		  <plugin>
+
+            <!-- Prevent wrong JDK from being used to build the project. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.5.0</version>
                 <executions>
                     <execution>
-                        <id>enforce-maven</id>
+                        <phase>validate</phase>
                         <goals>
                             <goal>enforce</goal>
                         </goals>
                         <configuration>
                             <rules>
-                                <requireMavenVersion>
-                                    <version>3.6.0</version>
-                                </requireMavenVersion>
+                                <requireJavaVersion>
+                                    <version>[${javase.version},)</version>
+                                </requireJavaVersion>
                             </rules>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
 
-			<!-- Add missing license headers to source files. -->
-			<plugin>
-				<groupId>com.mycila</groupId>
-				<artifactId>license-maven-plugin</artifactId>
-				<version>4.1</version>
-				<configuration>
-					<header>license.txt</header>
-					<excludes>
-						<exclude>*.*</exclude>
-					</excludes>
-					<mapping>
-						<java>SLASHSTAR_STYLE</java>
-					</mapping>
-				</configuration>
-				<executions>
-					<execution>
-						<phase>process-sources</phase>
-						<goals>
-							<goal>format</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+            <!-- Add missing license headers to source files. -->
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>5.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                        <configuration>
+                            <licenseSets>
+                                <licenseSet>
+                                    <header>license.txt</header>
+                                    <excludes>
+                                       <exclude>*.*</exclude> <!-- excludes files in root folder -->
+                                    </excludes>
+                                </licenseSet>
+                            </licenseSets>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
-			<!-- Configure the jar with the binaries. -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>3.2.2</version>
-				<configuration>
-					<archive>
-						<manifest>
-							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-						</manifest>
-						<manifestEntries>
-							<URL>${project.url}</URL>
-							<Extension-Name>${project.artifactId}</Extension-Name>
-						</manifestEntries>
-					</archive>
-				</configuration>
-			</plugin>
+            <!-- Configure the jar with the binaries and test binaries. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.4.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                        </manifest>
+                        <manifestEntries>
+                            <URL>${project.url}</URL>
+                            <Extension-Name>${project.artifactId}</Extension-Name>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
 
-			<!-- Configure the jar with the sources. -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>3.2.1</version>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar-no-fork</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+            <!-- Configure the jar with the sources. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.4.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
 			<!-- Configure the jar with the javadoc. -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.4.1</version>
+                <version>3.12.0</version>
 				<configuration>
-				    <quiet>true</quiet>
-                    <additionalOptions>-Xdoclint:none</additionalOptions>
-                    <additionalJOption>-Xdoclint:none</additionalJOption>
-					<notimestamp>true</notimestamp>
-					<splitindex>true</splitindex>
+                    <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
+                    <javadocVersion>${javase.version}</javadocVersion>
+                    <release>${javase.version}</release>
+                    <notimestamp>true</notimestamp>
+                    <splitindex>true</splitindex>
+                    <doclint>none</doclint>
 					<doctitle>OmniUtils API documentation</doctitle>
 				</configuration>
 				<executions>
@@ -195,17 +207,6 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
-
-			<!-- Configure JGitFlow. -->
-			<plugin>
-				<groupId>external.atlassian.jgitflow</groupId>
-				<artifactId>jgitflow-maven-plugin</artifactId>
-				<version>1.0-m5.1</version>
-				<configuration>
-					<noDeploy>true</noDeploy>
-					<enableFeatureVersions>true</enableFeatureVersions>
-				</configuration>
 			</plugin>
 
             <!-- Configure snapshot deployment (release deployment is done via 'release' profile). -->
